@@ -35,3 +35,10 @@ def conjuntos_adecuados(V,O,k):
         for pv in combinations(V,k-i): #la parte vieja
             for po in combinations(O,i): # la parte obligatoria
                 yield(frozenset(pv+po))
+                
+def es_sub(A,f,B):
+    for t in product(B,repeat=3):
+        if f(*t) not in B:
+            return False
+    return True
+     
