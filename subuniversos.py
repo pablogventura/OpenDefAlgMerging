@@ -34,7 +34,7 @@ def subuniverso(A,f,B):
         V=V | O
         O = N
         N = set()
-    return Ex
+    return Ex#,Prod
 
 def clausurar(ex,prod):
     cambie=True
@@ -43,6 +43,7 @@ def clausurar(ex,prod):
         for elem in prod:
             if elem not in ex:
                 if any(p <= ex for p in prod[elem]):
+                    print("se agrega %s a %s" % (elem,ex))
                     ex.add(elem)
                     cambie=True
     return ex
@@ -56,6 +57,7 @@ def conjuntos_adecuados(V,O,k):
 def es_sub(A,f,B):
     for t in product(B,repeat=3):
         if f(*t) not in B:
+            print("no tiene a f(%s)=%s" % (t,f(*t)))
             return False
     return True
      
