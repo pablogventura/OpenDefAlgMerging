@@ -48,7 +48,8 @@ def powerset(iterable):
     s = list(iterable)
     return map(list, chain.from_iterable(combinations(s, r) for r in range(len(s) + 1, -1, -1)))
 
-def compose(f,g):
+
+def compose(f, g):
     """
     Compone funciones de Python
 

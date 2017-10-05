@@ -7,10 +7,12 @@ from unicode import subscript
 from itertools import product, combinations
 from collections import defaultdict
 
+
 class Term(object):
     """
     Clase general de los terminos de primer orden
     """
+
     def __init__(self):
         pass
 
@@ -26,15 +28,17 @@ class Term(object):
     def __hash__(self):
         return hash(repr(self))
 
-    def __eq__(self,other):
+    def __eq__(self, other):
         return hash(self) == hash(other)
+
 
 class Variable(Term):
     """
     Variable de primer orden
     """
+
     def __init__(self, sym):
-        if isinstance(sym,int):
+        if isinstance(sym, int):
             self.sym = "x" + subscript(sym)
         else:
             self.sym = sym
@@ -51,10 +55,12 @@ class Variable(Term):
         except KeyError:
             raise ValueError("Free variable %s is not defined" % (self))
 
+
 class OpSym(object):
     """
     Simbolo de operacion de primer orden
     """
+
     def __init__(self, op, arity):
         self.op = op
         self.arity = arity
@@ -63,15 +69,17 @@ class OpSym(object):
         if len(args) != self.arity or any((not isinstance(a, Term)) for a in args):
             raise ValueError("Arity not correct or any isn't a term")
 
-        return OpTerm(self,args)
+        return OpTerm(self, args)
 
     def __repr__(self):
         return self.op
+
 
 class OpTerm(Term):
     """
     Termino de primer orden de la aplicacion de una funcion
     """
+
     def __init__(self, sym, args):
         self.sym = sym
         self.args = args
@@ -79,7 +87,7 @@ class OpTerm(Term):
     def __repr__(self):
         result = repr(self.sym)
         result += "("
-        result += ", ".join(map(repr,self.args))
+        result += ", ".join(map(repr, self.args))
         result += ")"
         return result
 
@@ -87,10 +95,11 @@ class OpTerm(Term):
         return set.union(*[f.free_vars() for f in self.args])
 
     def evaluate(self, model, vector):
-        args = [t.evaluate(model,vector) for t in self.args]
+        args = [t.evaluate(model, vector) for t in self.args]
         return model.operations[self.sym.op](*args)
 
 # FORMULAS
+
 
 class Formula(object):
     """
@@ -127,29 +136,30 @@ class Formula(object):
     ⊤
 
     """
+
     def __init__(self):
         pass
 
     def __and__(self, other):
-        if isinstance(self,TrueFormula):
+        if isinstance(self, TrueFormula):
             return other
-        elif isinstance(other,TrueFormula):
+        elif isinstance(other, TrueFormula):
             return self
 
-        return AndFormula([self,other])
+        return AndFormula([self, other])
 
     def __or__(self, other):
-        if isinstance(self,FalseFormula):
+        if isinstance(self, FalseFormula):
             return other
-        elif isinstance(other,FalseFormula):
+        elif isinstance(other, FalseFormula):
             return self
 
-        return OrFormula([self,other])
+        return OrFormula([self, other])
 
     def __neg__(self):
-        if isinstance(self,TrueFormula):
+        if isinstance(self, TrueFormula):
             return false()
-        elif isinstance(self,FalseFormula):
+        elif isinstance(self, FalseFormula):
             return true()
 
         return NegFormula(self)
@@ -157,7 +167,7 @@ class Formula(object):
     def free_vars(self):
         raise NotImplemented
 
-    def satisfy(self,model,vector):
+    def satisfy(self, model, vector):
         raise NotImplemented
 
     def __eq__(self, other):
@@ -166,10 +176,12 @@ class Formula(object):
     def __hash__(self):
         return hash(repr(self))
 
+
 class NegFormula(Formula):
     """
     Negacion de una formula
     """
+
     def __init__(self, f):
         self.f = f
 
@@ -179,14 +191,15 @@ class NegFormula(Formula):
     def free_vars(self):
         return self.f.free_vars()
 
-    def satisfy(self,model,vector):
-        return not self.f.satisfy(model,vector)
+    def satisfy(self, model, vector):
+        return not self.f.satisfy(model, vector)
 
 
 class BinaryOpFormula(Formula):
     """
     Clase general de las formulas tipo f1 η ... η fn
     """
+
     def __init__(self, subformulas):
         self.subformulas = subformulas
 
@@ -196,52 +209,58 @@ class BinaryOpFormula(Formula):
             result = result.union(f.free_vars())
         return result
 
+
 class OrFormula(BinaryOpFormula):
     """
     Disjuncion entre formulas
     """
+
     def __repr__(self):
         result = " ∨ ".join(str(f) for f in self.subformulas)
         result = "(" + result + ")"
         return result
 
     def __or__(self, other):
-        if isinstance(self,FalseFormula):
+        if isinstance(self, FalseFormula):
             return other
-        elif isinstance(other,FalseFormula):
+        elif isinstance(other, FalseFormula):
             return self
 
         return OrFormula(self.subformulas + [other])
 
-    def satisfy(self,model,vector):
+    def satisfy(self, model, vector):
         # el or y el and de python son lazy
-        return any(f.satisfy(model,vector) for f in self.subformulas)
+        return any(f.satisfy(model, vector) for f in self.subformulas)
+
 
 class AndFormula(BinaryOpFormula):
     """
     Conjuncion entre formulas
     """
+
     def __repr__(self):
         result = " ∧ ".join(str(f) for f in self.subformulas)
         result = "(" + result + ")"
         return result
 
     def __and__(self, other):
-        if isinstance(self,TrueFormula):
+        if isinstance(self, TrueFormula):
             return other
-        elif isinstance(other,TrueFormula):
+        elif isinstance(other, TrueFormula):
             return self
 
         return AndFormula(self.subformulas + [other])
 
-    def satisfy(self,model,vector):
+    def satisfy(self, model, vector):
         # el or y el and de python son lazy
-        return all(f.satisfy(model,vector) for f in self.subformulas)
+        return all(f.satisfy(model, vector) for f in self.subformulas)
+
 
 class RelSym(object):
     """
     Simbolo de relacion de primer orden
     """
+
     def __init__(self, rel, arity):
         self.rel = rel
         self.arity = arity
@@ -250,15 +269,17 @@ class RelSym(object):
         if len(args) != self.arity or any((not isinstance(a, Term)) for a in args):
             raise ValueError("Arity not correct or any isn't a term")
 
-        return RelFormula(self,args)
+        return RelFormula(self, args)
 
     def __repr__(self):
         return self.rel
+
 
 class RelFormula(Formula):
     """
     Formula de primer orden de la aplicacion de una relacion
     """
+
     def __init__(self, sym, args):
         self.sym = sym
         self.args = args
@@ -266,7 +287,7 @@ class RelFormula(Formula):
     def __repr__(self):
         result = repr(self.sym)
         result += "("
-        result += ", ".join(map(repr,self.args))
+        result += ", ".join(map(repr, self.args))
         result += ")"
         return result
 
@@ -274,33 +295,37 @@ class RelFormula(Formula):
         return set.union(*[f.free_vars() for f in self.args])
 
     def satisfy(self, model, vector):
-        args = [t.evaluate(model,vector) for t in self.args]
+        args = [t.evaluate(model, vector) for t in self.args]
         return model.relations[self.sym.rel](*args)
+
 
 class EqFormula(Formula):
     """
     Formula de primer orden que es una igualdad entre terminos
     """
+
     def __init__(self, t1, t2):
         if not (isinstance(t1, Term) and isinstance(t2, Term)):
             raise ValueError("Must be terms")
 
-        self.t1=t1
-        self.t2=t2
+        self.t1 = t1
+        self.t2 = t2
 
     def __repr__(self):
-        return "%s == %s" % (self.t1,self.t2)
+        return "%s == %s" % (self.t1, self.t2)
 
     def free_vars(self):
         return set.union(self.t1.free_vars(), self.t2.free_vars())
 
     def satisfy(self, model, vector):
-        return self.t1.evaluate(model,vector) == self.t2.evaluate(model,vector)
+        return self.t1.evaluate(model, vector) == self.t2.evaluate(model, vector)
+
 
 class QuantifierFormula(Formula):
     """
     Clase general de una formula con cuantificador
     """
+
     def __init__(self, var, f):
         self.var = var
         self.f = f
@@ -308,24 +333,28 @@ class QuantifierFormula(Formula):
     def free_vars(self):
         return self.f.free_vars() - {self.var}
 
+
 class ForAllFormula(QuantifierFormula):
     """
     Formula Universal
     """
+
     def __repr__(self):
         return "∀ %s %s" % (self.var, self.f)
 
     def satisfy(self, model, vector):
         for i in model.universe:
             vector[self.var] = i
-            if not self.f.satisfy(model,vector):
+            if not self.f.satisfy(model, vector):
                 return False
         return True
+
 
 class ExistsFormula(QuantifierFormula):
     """
     Formula Existencial
     """
+
     def __repr__(self):
         return "∃ %s %s" % (self.var, self.f)
 
@@ -333,9 +362,10 @@ class ExistsFormula(QuantifierFormula):
         vector = vector.copy()
         for i in model.universe:
             vector[self.var] = i
-            if self.f.satisfy(model,vector):
+            if self.f.satisfy(model, vector):
                 return True
         return False
+
 
 class TrueFormula(Formula):
     """
@@ -350,6 +380,7 @@ class TrueFormula(Formula):
 
     def satisfy(self, model, vector):
         return True
+
 
 class FalseFormula(Formula):
     """
@@ -366,11 +397,13 @@ class FalseFormula(Formula):
         return False
 # Shortcuts
 
+
 def variables(*lvars):
     """
     Declara variables de primer orden
     """
     return tuple(Variable(x) for x in lvars)
+
 
 def forall(var, formula):
     """
@@ -378,10 +411,12 @@ def forall(var, formula):
     """
     return ForAllFormula(var, formula)
 
-def eq(t1,t2):
-    if t1==t2:
+
+def eq(t1, t2):
+    if t1 == t2:
         return true()
-    return EqFormula(t1,t2)
+    return EqFormula(t1, t2)
+
 
 def exists(var, formula):
     """
@@ -389,11 +424,13 @@ def exists(var, formula):
     """
     return ExistsFormula(var, formula)
 
+
 def true():
     """
     Devuelve la formula True
     """
     return TrueFormula()
+
 
 def false():
     """
@@ -403,11 +440,13 @@ def false():
 
 # Formulas generators
 
+
 def grafico(term, vs, model):
     result = {}
     for tupla in product(model.universe, repeat=len(vs)):
-        result[tupla] = term.evaluate(model,{v:a for v,a in zip(vs,tupla)})
+        result[tupla] = term.evaluate(model, {v: a for v, a in zip(vs, tupla)})
     return tuple(sorted(result.items()))
+
 
 def generate_terms(funtions, vs, model):
     """
@@ -418,21 +457,22 @@ def generate_terms(funtions, vs, model):
     graficos = set()
 
     for v in vs:
-        g = grafico(v,vs,model)
+        g = grafico(v, vs, model)
         if not g in graficos:
             result.append(v)
             graficos.add(g)
-    nuevos=[1]
+    nuevos = [1]
     while nuevos:
-        nuevos =[]
+        nuevos = []
         for f in funtions:
-            for ts in product(result,repeat=f.arity):
-                g = grafico(f(*ts),vs,model)
+            for ts in product(result, repeat=f.arity):
+                g = grafico(f(*ts), vs, model)
                 if not g in graficos:
                     nuevos.append(f(*ts))
                     graficos.add(g)
             result += nuevos
     return result
+
 
 def atomics(relations, terms, equality=True):
     """
@@ -448,12 +488,13 @@ def atomics(relations, terms, equality=True):
     """
     terms
     for r in relations:
-        for t in product(terms,repeat=r.arity):
+        for t in product(terms, repeat=r.arity):
             yield r(*t)
 
     if equality:
-        for t in combinations(terms,2):
+        for t in combinations(terms, 2):
             yield eq(*t)
+
 
 def fo_type_to_relsym(fo_type):
     """
@@ -461,9 +502,10 @@ def fo_type_to_relsym(fo_type):
     """
     result = []
     for r in fo_type.relations:
-        result.append(RelSym(r,fo_type.relations[r]))
+        result.append(RelSym(r, fo_type.relations[r]))
 
     return result
+
 
 def fo_type_to_opsym(fo_type):
     """
@@ -471,9 +513,10 @@ def fo_type_to_opsym(fo_type):
     """
     result = []
     for f in fo_type.operations:
-        result.append(OpSym(f,fo_type.operations[f]))
+        result.append(OpSym(f, fo_type.operations[f]))
 
     return result
+
 
 def bolsas(model, arity):
     """
@@ -487,33 +530,21 @@ def bolsas(model, arity):
     >>> bolsas(j,1) == {- r(x0): [(0,)], r(x0): [(1,), (2,), (3,)]}
     True
     """
-    result = {true(): list(product(model.universe,repeat=arity))}
+    result = {true(): list(product(model.universe, repeat=arity))}
     vs = variables(*range(arity))
     # lo comentado es para usar terminos con funciones y no solo variables
-    terms = generate_terms(fo_type_to_opsym(model.fo_type),vs,model)
-    formulas = atomics(fo_type_to_relsym(model.fo_type),terms)
+    terms = generate_terms(fo_type_to_opsym(model.fo_type), vs, model)
+    formulas = atomics(fo_type_to_relsym(model.fo_type), terms)
     for formula in formulas:
         nuevas = defaultdict(list)
-        for foriginal,bolsa in result.items():
+        for foriginal, bolsa in result.items():
             for tupla in bolsa:
                 # TODO CUANDO UNA FORMULA NO TIENE NADIE QUE LA SATISFACE
                 # O TODOS LA SATISFACEN, NO VALE LA PENA AGREGARLA
-                if formula.satisfy(model,{v:i for v,i in zip(vs, tupla)}):
+                if formula.satisfy(model, {v: i for v, i in zip(vs, tupla)}):
                     nuevas[foriginal & formula].append(tupla)
                 else:
                     nuevas[foriginal & (-formula)].append(tupla)
         result = nuevas
 
     return dict(result)
-
-
-
-
-
-
-
-
-
-
-
-

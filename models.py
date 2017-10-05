@@ -4,72 +4,82 @@
 
 from itertools import combinations
 from functools import lru_cache
+
+
 class PartialOrderedDict(dict):
-    def __lt__(self, other): # <
+    def __lt__(self, other):  # <
         return self <= other and self != other
-    def __gt__(self, other): # >
+
+    def __gt__(self, other):  # >
         return self >= other and self != other
-    def __le__(self, other): # <=
+
+    def __le__(self, other):  # <=
         for k in self:
             if not self[k] <= other[k]:
                 return False
         return True
-    def __ge__(self, other): # >=
+
+    def __ge__(self, other):  # >=
         for k in self:
             if not self[k] >= other[k]:
                 return False
         return True
+
+
 class RelationalModel(object):
-    def __init__(self,universe,relations):
+    def __init__(self, universe, relations):
         """
         Relational Model
         Input: a universe list, relations dict
         """
-        self.universe= list(universe)
+        self.universe = list(universe)
         self.relations = relations
 
-    def subuniverses(self,size):
+    def subuniverses(self, size):
         if size:
-            for subu in combinations(self.universe,size):
+            for subu in combinations(self.universe, size):
                 yield subu
-    
-    def substructures(self,size):
+
+    def substructures(self, size):
         for s in self.subuniverses(size):
-            relations={}
+            relations = {}
             for r in self.relations:
-                relations[r]=self.relations[r].restrict(s)
-            yield RelationalModel(s,relations)
+                relations[r] = self.relations[r].restrict(s)
+            yield RelationalModel(s, relations)
 
     def __repr__(self):
-        return ("RelationalModel(universe=%s,relations=%s)"%(self.universe,self.relations))
-    
+        return ("RelationalModel(universe=%s,relations=%s)" % (self.universe, self.relations))
+
     @lru_cache(maxsize=2)
-    def rels_sizes(self,subtype):
-        return PartialOrderedDict({r:len(self.relations[r]) for r in subtype})
-    
-    @lru_cache(maxsize=None)    
-    def minion_tables(self,subtype):
+    def rels_sizes(self, subtype):
+        return PartialOrderedDict({r: len(self.relations[r]) for r in subtype})
+
+    @lru_cache(maxsize=None)
+    def minion_tables(self, subtype):
         result = ""
         for r in subtype:
-            result += "%s %s %s\n" % (r, len(self.relations[r]), self.relations[r].arity)
+            result += "%s %s %s\n" % (r,
+                                      len(self.relations[r]), self.relations[r].arity)
             for t in self.relations[r]:
-                result += " ".join(str(self.universe.index(x)) for x in t) + "\n"
+                result += " ".join(str(self.universe.index(x))
+                                   for x in t) + "\n"
             result += "\n"
         return result[:-1]
-        
-    def minion_constraints(self,subtype):
+
+    def minion_constraints(self, subtype):
         result = ""
-        #table([f[0],f[0],f[0]],bv)
+        # table([f[0],f[0],f[0]],bv)
         result = ""
         for r in subtype:
             for t in self.relations[r]:
                 result += "table([f["
                 result += "],f[".join(str(self.universe.index(x)) for x in t)
                 result += "]],%s)\n" % r
-        return result        
+        return result
+
     def __len__(self):
         return len(self.universe)
-    def spectrum(self,subtype):
-        result=set()
+
+    def spectrum(self, subtype):
+        result = set()
         return result.union(*[self.relations[r].spectrum() for r in subtype])
-        

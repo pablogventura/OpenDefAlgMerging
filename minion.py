@@ -14,10 +14,12 @@ from itertools import product
 from collections import defaultdict
 from misc import *
 
+
 def identity_table(size):
     result = "I 1 %s\n" % size
     result += " ".join(str(i) for i in range(size))
     return result + "\n"
+
 
 class MinionSol(object):
     count = 0
@@ -33,8 +35,9 @@ class MinionSol(object):
         self.fun = fun
         self.allsols = allsols
 
-        self.input_filename = config.minion_path + "input_minion%s_%s" % (self.id,os.getpid())
-        files.create_pipe(self.input_filename) # TODO SACAR PIPE
+        self.input_filename = config.minion_path + \
+            "input_minion%s_%s" % (self.id, os.getpid())
+        files.create_pipe(self.input_filename)  # TODO SACAR PIPE
 
         minionargs = ["-printsolsonly", "-randomseed", "0"]
         if allsols:
@@ -53,14 +56,14 @@ class MinionSol(object):
         La parsea y devuelve una lista
         """
         str_sol = self.minionapp.stdout.readline().decode('utf-8').strip()
-        
+
         if str_sol:
             try:
                 result = list(map(int, str_sol.strip().split(" ")))
                 for i, v in enumerate(result):
                     if v == -1:
                         result[i] = None
-                result = {i:v for i,v in enumerate(result)}
+                result = {i: v for i, v in enumerate(result)}
                 # ACA IRIAN LAS TRADUCCIONES DE NOMBRES EN EL FUTURO
             except ValueError:
                 str_sol += "\n"
@@ -137,9 +140,9 @@ class MinionSol(object):
             self.__terminate()
 
 
-
-def automorphisms(model,subtype):
-    result = "MINION 3\n**VARIABLES**\nDISCRETE f[%s]{0..%s}\n" % (len(model),len(model)-1)
+def automorphisms(model, subtype):
+    result = "MINION 3\n**VARIABLES**\nDISCRETE f[%s]{0..%s}\n" % (
+        len(model), len(model) - 1)
     result += "**TUPLELIST**\n"
     result += model.minion_tables(subtype)
     result += identity_table(len(model))
@@ -148,24 +151,23 @@ def automorphisms(model,subtype):
     result += "alldiff([f["
     result += "],f[".join(str(i) for i in range(len(model)))
     result += "]])\n"
-    result += "negativetable([f[" # evito identidades
+    result += "negativetable([f["  # evito identidades
     result += "],f[".join(str(i) for i in range(len(model)))
     result += "]],I)\n"
-    result += "**EOF**" 
+    result += "**EOF**"
 
-    
-    
-    return MinionSol(result,allsols=True,fun=lambda aut:(Automorphism({model.universe[k]:model.universe[aut[k]] for k in aut},model,subtype)))
+    return MinionSol(result, allsols=True, fun=lambda aut: (Automorphism({model.universe[k]: model.universe[aut[k]] for k in aut}, model, subtype)))
 
 
-def isomorphisms(source,target,subtype,allsols=True):
-    if len(source)!=len(target):
-        return [] # generador vacio
-    
+def isomorphisms(source, target, subtype, allsols=True):
+    if len(source) != len(target):
+        return []  # generador vacio
+
     if source.rels_sizes(subtype) != target.rels_sizes(subtype):
-        return [] # generador vacio
-    
-    result = "MINION 3\n**VARIABLES**\nDISCRETE f[%s]{0..%s}\n" % (len(source),len(target)-1)
+        return []  # generador vacio
+
+    result = "MINION 3\n**VARIABLES**\nDISCRETE f[%s]{0..%s}\n" % (
+        len(source), len(target) - 1)
     result += "**TUPLELIST**\n"
     result += target.minion_tables(subtype)
     result += "**CONSTRAINTS**\n"
@@ -173,20 +175,20 @@ def isomorphisms(source,target,subtype,allsols=True):
     result += "alldiff([f["
     result += "],f[".join(str(i) for i in range(len(source)))
     result += "]])\n"
-    result += "**EOF**" 
-    
-    
-    
-    return MinionSol(result,allsols,fun=lambda iso:(Isomorphism({source.universe[k]:target.universe[iso[k]] for k in iso},source,target,subtype)))
+    result += "**EOF**"
 
-def bihomomorphisms(source,target,subtype,allsols=True):
-    if len(source)!=len(target):
-        return [] # generador vacio
-    
+    return MinionSol(result, allsols, fun=lambda iso: (Isomorphism({source.universe[k]: target.universe[iso[k]] for k in iso}, source, target, subtype)))
+
+
+def bihomomorphisms(source, target, subtype, allsols=True):
+    if len(source) != len(target):
+        return []  # generador vacio
+
     if source.rels_sizes(subtype) > target.rels_sizes(subtype):
-        return [] # generador vacio
-    
-    result = "MINION 3\n**VARIABLES**\nDISCRETE f[%s]{0..%s}\n" % (len(source),len(target)-1)
+        return []  # generador vacio
+
+    result = "MINION 3\n**VARIABLES**\nDISCRETE f[%s]{0..%s}\n" % (
+        len(source), len(target) - 1)
     result += "**TUPLELIST**\n"
     result += target.minion_tables(subtype)
     result += "**CONSTRAINTS**\n"
@@ -194,37 +196,37 @@ def bihomomorphisms(source,target,subtype,allsols=True):
     result += "alldiff([f["
     result += "],f[".join(str(i) for i in range(len(source)))
     result += "]])\n"
-    result += "**EOF**" 
-    
-    
-    
-    return MinionSol(result,allsols,fun=lambda iso:(Homomorphism({source.universe[k]:target.universe[iso[k]] for k in iso},source,target,subtype)))
+    result += "**EOF**"
 
-def homomorphisms_surj(source,target,subtype,allsols=True):
-    if len(source)<len(target):
-        return [] # generador vacio
-    
+    return MinionSol(result, allsols, fun=lambda iso: (Homomorphism({source.universe[k]: target.universe[iso[k]] for k in iso}, source, target, subtype)))
+
+
+def homomorphisms_surj(source, target, subtype, allsols=True):
+    if len(source) < len(target):
+        return []  # generador vacio
+
     if source.rels_sizes(subtype) > target.rels_sizes(subtype):
-        return [] # generador vacio
-    
-    result = "MINION 3\n**VARIABLES**\nDISCRETE f[%s]{0..%s}\n" % (len(source),len(target)-1)
+        return []  # generador vacio
+
+    result = "MINION 3\n**VARIABLES**\nDISCRETE f[%s]{0..%s}\n" % (
+        len(source), len(target) - 1)
     result += "**TUPLELIST**\n"
     result += target.minion_tables(subtype)
     result += "**CONSTRAINTS**\n"
     result += source.minion_constraints(subtype)
-    result += "**EOF**" 
-    
-    
-    
-    return MinionSol(result,allsols,fun=lambda iso:(Homomorphism({source.universe[k]:target.universe[iso[k]] for k in iso},source,target,subtype)))
+    result += "**EOF**"
 
-def is_bihomomorphic(source,target,subtype):
-    bh = bihomomorphisms(source,target,subtype,allsols=False)
-    
+    return MinionSol(result, allsols, fun=lambda iso: (Homomorphism({source.universe[k]: target.universe[iso[k]] for k in iso}, source, target, subtype)))
+
+
+def is_bihomomorphic(source, target, subtype):
+    bh = bihomomorphisms(source, target, subtype, allsols=False)
+
     if bh:
         return bh[0]
     else:
         return False
+
 
 def bihomomorphisms_to_any(source, targets, subtype):
     """
@@ -233,11 +235,12 @@ def bihomomorphisms_to_any(source, targets, subtype):
     """
     if not targets:
         return
-    
+
     for target in targets:
-        for bh in bihomomorphisms(source,target,subtype):
+        for bh in bihomomorphisms(source, target, subtype):
             yield bh
     return
+
 
 def bihomomorphisms_from_any(sources, target, subtype):
     """
@@ -246,16 +249,17 @@ def bihomomorphisms_from_any(sources, target, subtype):
     """
     if not sources:
         return
-    
+
     for source in sources:
-        for bh in bihomomorphisms(source,target,subtype):
+        for bh in bihomomorphisms(source, target, subtype):
             yield bh
     return
 
+
 def is_isomorphic(source, target, subtype):
 
-    i = isomorphisms(source,target,subtype,allsols=False)
-    
+    i = isomorphisms(source, target, subtype, allsols=False)
+
     if i:
         return i[0]
     else:
@@ -269,9 +273,9 @@ def is_isomorphic_to_any(source, targets, subtype):
     """
     if not targets:
         return False
-    
+
     for target in targets.iterate(len(source)):
-        iso = is_isomorphic(source,target,subtype)
+        iso = is_isomorphic(source, target, subtype)
         if iso:
             return iso
     return False
