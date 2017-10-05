@@ -26,15 +26,16 @@ class PartialOrderedDict(dict):
         return True
 
 
-class RelationalModel(object):
-    def __init__(self, universe, relations):
+class Model(object):
+    def __init__(self, universe, relations, operations):
         """
-        Relational Model
-        Input: a universe list, relations dict
+        Model
+        Input: a universe list, relations dict, operations dict
         """
         self.universe = list(universe)
         self.relations = relations
-
+        self.operations = operations
+#TODO
     def subuniverses(self, size):
         if size:
             for subu in combinations(self.universe, size):
