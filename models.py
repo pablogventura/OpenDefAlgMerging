@@ -4,7 +4,7 @@
 
 from itertools import combinations
 from functools import lru_cache
-
+from nuevosub import tipoSub
 
 class PartialOrderedDict(dict):
     def __lt__(self, other):  # <
@@ -35,7 +35,7 @@ class Model(object):
         self.universe = list(universe)
         self.relations = relations
         self.operations = operations
-#TODO
+        
     def subuniverses(self, size):
         if size:
             for subu in combinations(self.universe, size):
