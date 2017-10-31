@@ -27,5 +27,5 @@ def preprocesamiento(T):
     for r in q:
         result.append(set())
         for t in r:
-            result[-1].add(tuple(sorted(set(t))))
+            result[-1].add(tuple(sorted(set(t))))#esto esta mal, tiene que borrar solo el que es igual
     return result
