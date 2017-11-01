@@ -20,12 +20,46 @@ def patron(t):
     for i,a in enumerate(t):
         result[a].add(i)
     return set(frozenset(s) for s in result.values())
-    
+
+def limpia(t):
+    result=set()
+    for e in t:
+        result.add(t.index(e))
+    return sorted(result)
+
+
 def preprocesamiento(T):
     result = []
-    q = quotient([(1,2,3),(1,2,4),(1,2,2),(2,1,1),(1,1,2)],patron).values()
-    for r in q:
+    q = quotient(T,patron)
+    for p in q:
+        indices=limpia(p)
         result.append(set())
-        for t in r:
-            result[-1].add(tuple(sorted(set(t))))#esto esta mal, tiene que borrar solo el que es igual
+        for t in q[p]:
+            result[-1].add(tuple(t[i] for i in indices))
     return result
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
