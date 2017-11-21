@@ -35,18 +35,15 @@ class Model(object):
         self.universe = list(universe)
         self.relations = relations
         self.operations = operations
-        
-    def subuniverses(self, size):
-        if size:
-            for subu in combinations(self.universe, size):
-                yield subu
 
-    def substructures(self, size):
-        for s in self.subuniverses(size):
-            relations = {}
-            for r in self.relations:
-                relations[r] = self.relations[r].restrict(s)
-            yield Model(s, relations)
+    def substructure(self, subuniverse):
+        relations = {}
+        operations = {}
+        for r in self.relations:
+            relations[r] = self.relations[r].restrict(subuniverse)
+        for f in self.operations:
+            operations[f] = self.operations[f].restrict(subuniverse)
+        yield Model(subuniverse, relations, operations)
 
     def __repr__(self):
         return ("RelationalModel(universe=%s,relations=%s)" % (self.universe, self.relations))
