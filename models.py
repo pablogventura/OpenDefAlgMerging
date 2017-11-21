@@ -46,7 +46,7 @@ class Model(object):
             relations = {}
             for r in self.relations:
                 relations[r] = self.relations[r].restrict(s)
-            yield RelationalModel(s, relations)
+            yield Model(s, relations)
 
     def __repr__(self):
         return ("RelationalModel(universe=%s,relations=%s)" % (self.universe, self.relations))

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
-from models import RelationalModel
+from models import Model
 from relops import Relation, Operation
 
 
@@ -23,7 +23,7 @@ def stdin_parser():
     relations = {}
     operations = {}
     try:
-        universe = map(int, input().split())  # first line, universe
+        universe = [int(i) for i in input().split()]  # first line, universe
         linenumber += 1
         assert input() == "", ("Line #%s must be empty" % linenumber)
         linenumber += 1
