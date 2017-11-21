@@ -24,7 +24,7 @@ def tipoSub(alpha, Func, debug=True):
                     i += 1  # faltaba en el algoritmo original
         O = H[-1]
     if debug:
-        print tuple(len(h) for h in H), sorted(tuple(len(T[k]) for k in sorted(T.keys())))
+        print (tuple(len(h) for h in H), sorted(tuple(len(T[k]) for k in sorted(T.keys()))))
     else:
         return H, T
 
