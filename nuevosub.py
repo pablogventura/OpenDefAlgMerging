@@ -2,7 +2,7 @@ from itertools import product
 from collections import defaultdict
 
 
-def tipoSub(alpha, Func, debug=True):
+def tipoSub(alpha, Func, debug=False):
     # input alpha, Func
     alpha = list(sorted(alpha))
     H = [alpha]
@@ -14,7 +14,7 @@ def tipoSub(alpha, Func, debug=True):
         H.append([])
         for ar in sorted(Func):
             for tup in TupAd(H, ar):
-                for f in Func[ar]:
+                for sym,f in sorted(Func[ar],key=lambda f:f[0]):
                     x = f(*tup)
                     if any(x in h for h in H):
                         T[x].add(i)
