@@ -11,6 +11,7 @@ from collections import defaultdict
 
 def main():
     model = stdin_parser()
+    assert len(model.relations) == 1
     targets_rel = tuple(sym for sym in model.relations.keys() if sym[0] == "T")
     if not targets_rel:
         print("ERROR: NO TARGET RELATIONS FOUND")
