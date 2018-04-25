@@ -46,7 +46,7 @@ class Model(object):
         yield Model(subuniverse, relations, operations)
 
     def __repr__(self):
-        return ("RelationalModel(universe=%s,relations=%s)" % (self.universe, self.relations))
+        return ("Model(universe=%s,relations=%s,operations=%s)" % (self.universe, self.relations, self.operations))
 
     @lru_cache(maxsize=2)
     def rels_sizes(self, subtype):
