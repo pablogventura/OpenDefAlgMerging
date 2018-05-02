@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 from counterexample import Counterexample
-from minion import is_isomorphic
+from hit import submodel_hash
 from parser import stdin_parser
-from minion import automorphisms, isomorphisms, is_isomorphic_to_any, MinionSol
+
 from itertools import chain
 from misc import indent
 from collections import defaultdict
@@ -124,6 +124,68 @@ def is_open_rel(model, target_rels):
     print("  #Auts = %s" % auts_count)
     print("  #Isos = %s" % isos_count)
     print("  %s calls to Minion" % MinionSol.count)
+
+
+
+
+def isOpenDef(A, R, F, Tg):
+
+    global TP= set() # Tipos totalmente procesados
+
+    T=set() # Tipos procesandose
+
+    V=set() # Viejos
+
+    for t in permutations(list(A),Tg.arity):
+        if [v for v in V if t in v]:
+            continue
+        H=submodel_hash(A,t)
+        for HH in T.union(TP):#Es un tipo conocido
+            if H==HH:
+                if H in TP: #Es un tipo totalmente procesado
+                    V=V+H.universe() #Pasa a ser viejo
+                if not H.iso(HH).iso_wrt(Tg) # no preserva Tg
+                    return False
+        else:  # Es un tipo nuevo
+
+            if len(A)==len(H.universe): #Es un automorfismo}
+                for HH in T:
+                    if not H.iso(HH).iso_wrt(Tg): # Si T=set(), preserva trivialmente
+                        return False
+                T.add(H) #Pasa a ser un tipo en proceso}
+
+            else: #Es un un subiso
+                ts=isOpenDefR(H,V,R,F,Tg) #Baja en el árbol
+                if ts:
+                    V=V + H.universe() # Pasa a ser viejo
+                    TP=TP + ts #Pasan a ser tipos procesados
+                else:
+                    return False
+    return True
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
