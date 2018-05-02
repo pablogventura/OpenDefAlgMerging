@@ -12,7 +12,7 @@ def submodel_hash(model, generators):
     ops = model.operations
     ops =defaultdict(set)
     for op in model.operations:
-        ops[model.operations[op].arity].add(op)
+        ops[model.operations[op].arity].add(model.operations[op])
     
     H = [generators]
     i = len(generators)
@@ -24,8 +24,7 @@ def submodel_hash(model, generators):
         for ar in sorted(ops):
             for tup in TupAd(H, ar):
                 i += 1  
-                for sym_i,f in enumerate(sorted(ops[ar],key=lambda f:f[0])):
-                    f=f[1]
+                for sym_i,f in enumerate(sorted(ops[ar],key=lambda f: f.sym)):
                     x = f(*tup)
                     if any(x in h for h in H):
                         T[x].add((i,sym_i,tuple_number(tup,H)))
