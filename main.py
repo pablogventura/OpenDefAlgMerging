@@ -19,7 +19,7 @@ def main():
     is_open_rel(model, targets_rel)
 
 
-class SetSized(object):
+class setSized(object):
     def __init__(self, values=[]):
         self.dict = defaultdict(set)
         for v in values:
@@ -29,7 +29,7 @@ class SetSized(object):
         self.dict[len(e)].add(e)
 
     def __iter__(self):
-        print("WARNING: __iter__ SetSized")
+        print("WARNING: __iter__ setSized")
         for i in self.sizes():
             for v in self.iterate(i):
                 yield v
@@ -78,7 +78,7 @@ def is_open_rel(model, target_rels):
     print("Spectrum = %s" % spectrum)
     isos_count = 0
     auts_count = 0
-    S = SetSized()
+    S = setSized()
 
     genstack = GenStack(model.substructures(size))
     try:
@@ -127,10 +127,10 @@ def is_open_rel(model, target_rels):
 
 
 
-
+TP=set()
 def isOpenDef(A, R, F, Tg):
 
-    global TP= set() # Tipos totalmente procesados
+    global TP 
 
     T=set() # Tipos procesandose
 
@@ -144,7 +144,7 @@ def isOpenDef(A, R, F, Tg):
             if H==HH:
                 if H in TP: #Es un tipo totalmente procesado
                     V=V+H.universe() #Pasa a ser viejo
-                if not H.iso(HH).iso_wrt(Tg) # no preserva Tg
+                if not H.iso(HH).iso_wrt(Tg): # no preserva Tg
                     return False
         else:  # Es un tipo nuevo
 
