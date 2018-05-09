@@ -25,16 +25,20 @@ def submodel_hash(model, generators):
     while O:
         H.append([])
         for ar in sorted(ops):
-            for tup in TupAd(H, ar):
-                for sym_i,f in enumerate(sorted(ops[ar],key=lambda f: f.sym)):
-                    i += 1  
-                    print(tup)
-                    print(i)
-                    x = f(*tup)
-                    V.append(x)
-                    T[x].add(i)
-                    if all(x not in h for h in H):
-                        H[-1].append(x)
+        
+            flath = [item for sublist in H for item in sublist]
+            o = H[-2]
+            for tup in product(flath, repeat=ar):
+                i += 1  
+                if any(t in o for t in tup):
+                    for sym_i,f in enumerate(sorted(ops[ar],key=lambda f: f.sym)):
+                        print(tup)
+                        print(i)
+                        x = f(*tup)
+                        V.append(x)
+                        T[x].add(i)
+                        if all(x not in h for h in H):
+                            H[-1].append(x)
         O = H[-1]
     return V,H,T
 
@@ -63,5 +67,5 @@ def TupAd(h, k):
 if __name__ == "__main__":
     from parser import stdin_parser
     model = stdin_parser()
-    print(submodel_hash(model,[0,1,2]))
+    print(submodel_hash(model,[0,1]))
 

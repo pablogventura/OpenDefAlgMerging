@@ -116,4 +116,4 @@ def stdin_parser():
 if __name__ == "__main__":
     model = stdin_parser()
     print(model)
-    print(submodel_hash(model,[0]))
+    print(submodel_hash(model,[0,1]))
