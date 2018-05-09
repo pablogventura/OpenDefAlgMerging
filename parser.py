@@ -5,7 +5,7 @@ from itertools import count
 
 from models import Model
 from relops import Relation, Operation
-from hit import SubmodelHash, submodel_hash
+from hit import SubmodelHash
 
 # parsing operations and relations
 # operations format:
@@ -116,4 +116,4 @@ def stdin_parser():
 if __name__ == "__main__":
     model = stdin_parser()
     print(model)
-    print(submodel_hash(model,[0,1]))
+    print(SubmodelHash(model,[0,1]))
