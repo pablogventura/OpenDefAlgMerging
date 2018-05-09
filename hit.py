@@ -44,30 +44,7 @@ class SubmodelHash(object):
     Clase de HIT, toma un modelo ambiente y los elementos generadores
     """
     def __init__(self,model, generators):
-        generators = list(sorted(generators))
-        ops = model.operations
-        H = [generators]
-        i = len(generators)
-        T = defaultdict(set, {a:{(len(H)-1,-1,(i,))}  for i, a in enumerate(generators)})
-        O = H[-1]
-
-        while O:
-            H.append([])
-            for ar in sorted(ops):
-                for tup in TupAd(H, ar):
-                    i += 1  
-                    for sym_i,f in enumerate(sorted(ops[ar],key=lambda f:f[0])):
-                        f=f[1]
-                        x = f(*tup)
-                        if any(x in h for h in H):
-                            T[x].add((i,sym_i,tuple_number(tup,H)))
-                        else:
-                            T[x].add((i,sym_i,tuple_number(tup,H)))
-                            H[-1].append(x)
-                i = 0
-            O = H[-1]
-        self.H = H
-        self.T = T
+        pass
     def __eq__(self,other):
         return self.T == other.T
     
