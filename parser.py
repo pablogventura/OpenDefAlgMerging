@@ -5,6 +5,7 @@ from itertools import count
 
 from models import Model
 from relops import Relation, Operation
+from hit import SubmodelHash, submodel_hash
 
 # parsing operations and relations
 # operations format:
@@ -95,7 +96,7 @@ def stdin_parser():
                         # continua una operacion
                         current_op.add(parse_tuple(line))
                         op_missing_tuples-=1
-                        print( "faltan %s" % op_missing_tuples)
+                        #print( "faltan %s" % op_missing_tuples)
                         if not op_missing_tuples:
                             operations[current_op.sym] = current_op
                             current_op = None
@@ -115,3 +116,4 @@ def stdin_parser():
 if __name__ == "__main__":
     model = stdin_parser()
     print(model)
+    print(submodel_hash(model,[0]))

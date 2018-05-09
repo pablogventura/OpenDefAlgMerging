@@ -9,31 +9,34 @@ def tuple_number(t,order):
 def submodel_hash(model, generators):
     # input model, generators
     generators = list(sorted(generators))
+    #print(generators)
     ops = model.operations
     ops =defaultdict(set)
     for op in model.operations:
         ops[model.operations[op].arity].add(model.operations[op])
     
     H = [generators]
-    i = len(generators)
-    T = defaultdict(set, {a:{(len(H)-1,-1,(i,))}  for i, a in enumerate(generators)})
+    i = len(generators)-1
+    T = defaultdict(set, {a:{i}  for i, a in enumerate(generators)})
+    print (T)
     O = H[-1]
+    V=list(generators)
 
     while O:
         H.append([])
         for ar in sorted(ops):
             for tup in TupAd(H, ar):
-                i += 1  
                 for sym_i,f in enumerate(sorted(ops[ar],key=lambda f: f.sym)):
+                    i += 1  
+                    print(tup)
+                    print(i)
                     x = f(*tup)
-                    if any(x in h for h in H):
-                        T[x].add((i,sym_i,tuple_number(tup,H)))
-                    else:
-                        T[x].add((i,sym_i,tuple_number(tup,H)))
+                    V.append(x)
+                    T[x].add(i)
+                    if all(x not in h for h in H):
                         H[-1].append(x)
-            i = 0
         O = H[-1]
-    return H, T
+    return V,H,T
 
 
 class SubmodelHash(object):
@@ -74,9 +77,7 @@ def TupAd(h, k):
     # que estan en el penultimo lugar de h
 
     flath = [item for sublist in h for item in sublist]
-    # print flath
     o = h[-2]
-    print((flath,k))
     for tup in product(flath, repeat=k):
         if any(t in o for t in tup):
             yield tup
