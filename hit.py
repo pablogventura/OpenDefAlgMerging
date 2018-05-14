@@ -43,7 +43,7 @@ class SubmodelHash(object):
                                 self.H[-1].append(x)
             O = self.H[-1]
     def __eq__(self,other):
-        return self.self.T == other.self.T
+        return list(self.self.T.values()) == list(other.self.T.values())
     def __repr__(self):
         result = "TupleModelHash(\n"
         result += indent("Tuple=%s,\n" % self.generators)
