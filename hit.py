@@ -1,12 +1,9 @@
 from itertools import product
 from collections import defaultdict
 from misc import indent
+from isomorphisms import Isomorphism
 
-def tuple_number(t,order):
-    flath = [item for sublist in order for item in sublist]
-    return tuple(flath.index(e) for e in t)
-
-class SubmodelHash(object):
+class TupleModelHash(object):
     """
     Clase de HIT, toma un modelo ambiente y la tupla generadora
     """
@@ -42,8 +39,20 @@ class SubmodelHash(object):
                             if all(x not in h for h in self.H):
                                 self.H[-1].append(x)
             O = self.H[-1]
+        self.H.pop()
+        self.T = {k:frozenset(self.T[k]) for k in self.T}
     def __eq__(self,other):
-        return list(self.self.T.values()) == list(other.self.T.values())
+        return set(self.T.values()) == set(other.T.values())
+    
+    def isomorphism(self,other):
+        if self == other:
+            flatSelfh = [item for sublist in self.H for item in sublist]
+            flatOtherh = [item for sublist in other.H for item in sublist]
+            d={(flatSelfh[i],):flatOtherh[i] for i in range(len(flatSelfh))}
+            return Isomorphism(d,None,None,None)
+        else:
+            return None
+    
     def __repr__(self):
         result = "TupleModelHash(\n"
         result += indent("Tuple=%s,\n" % self.generators)
@@ -51,21 +60,14 @@ class SubmodelHash(object):
         result += indent("Type=%s,\n" % dict(self.T))
         result += ")"
         return result
-    
-
-def TupAd(h, k):
-    # devuelve una tupla de largo k con por lo menos un obligatorio
-    # que estan en el penultimo lugar de h
-
-    flath = [item for sublist in h for item in sublist]
-    o = h[-2]
-    for tup in product(flath, repeat=k):
-        if any(t in o for t in tup):
-            yield tup
 
 
 if __name__ == "__main__":
     from parser import stdin_parser
     model = stdin_parser()
-    print(submodel_hash(model,[0,1]))
+    ta = [2,1]
+    tb= [0,3]
+    print(TupleModelHash(model,ta))
+    print(TupleModelHash(model,tb))
+    print(TupleModelHash(model,ta).isomorphism(TupleModelHash(model,tb)))#.isomorphism(TupleModelHash(model,[1,0])))
 
