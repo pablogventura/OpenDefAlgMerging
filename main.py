@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 from counterexample import Counterexample
-from hit import submodel_hash
+from hit import TupleModelHash
 from parser import stdin_parser
 
-from itertools import chain
+from itertools import chain,permutations
 from misc import indent
 from collections import defaultdict
 
@@ -16,7 +16,7 @@ def main():
     if not targets_rel:
         print("ERROR: NO TARGET RELATIONS FOUND")
         return
-    is_open_rel(model, targets_rel)
+    print(isOpenDef(model, targets_rel))
 
 
 class setSized(object):
@@ -68,7 +68,7 @@ class GenStack(object):
         return result
 
 
-def is_open_rel(model, target_rels):
+def is_open_relold(model, target_rels):
     base_rels = tuple((r for r in model.relations if r not in target_rels))
     spectrum = sorted(model.spectrum(target_rels), reverse=True)
     if spectrum:
@@ -128,7 +128,7 @@ def is_open_rel(model, target_rels):
 
 
 TP=set()
-def isOpenDef(A, R, F, Tg):
+def isOpenDef(A, Tg):
 
     global TP 
 
@@ -136,31 +136,32 @@ def isOpenDef(A, R, F, Tg):
 
     V=set() # Viejos
 
-    for t in permutations(list(A),Tg.arity):
-        if [v for v in V if t in v]:
+    for t in permutations(list(A.universe),A.relations[Tg[0]].arity):
+        if [v for v in V if set(t) in v]:
             continue
-        H=submodel_hash(A,t)
+        H=TupleModelHash(A,t)
         for HH in T.union(TP):#Es un tipo conocido
             if H==HH:
                 if H in TP: #Es un tipo totalmente procesado
                     V=V+H.universe() #Pasa a ser viejo
                 if not H.iso(HH).iso_wrt(Tg): # no preserva Tg
                     return False
-        else:  # Es un tipo nuevo
-
-            if len(A)==len(H.universe): #Es un automorfismo}
-                for HH in T:
-                    if not H.iso(HH).iso_wrt(Tg): # Si T=set(), preserva trivialmente
-                        return False
-                T.add(H) #Pasa a ser un tipo en proceso}
-
-            else: #Es un un subiso
-                ts=isOpenDefR(H,V,R,F,Tg) #Baja en el árbol
-                if ts:
-                    V=V + H.universe() # Pasa a ser viejo
-                    TP=TP + ts #Pasan a ser tipos procesados
                 else:
+                    return True
+        # Es un tipo nuevo
+        if len(A)==len(H.universe()): #Es un automorfismo
+            for HH in T:
+                if not H.iso(HH).iso_wrt(Tg): # Si T=set(), preserva trivialmente
                     return False
+            T.add(H) #Pasa a ser un tipo en proceso
+
+        else: #Es un un subiso
+            ts=isOpenDefR(H,V,A,Tg) #Baja en el árbol
+            if ts:
+                V=V + H.universe() # Pasa a ser viejo
+                TP=TP + ts #Pasan a ser tipos procesados
+            else:
+                return False
     return True
 
 
@@ -168,6 +169,42 @@ def isOpenDef(A, R, F, Tg):
 
 
 
+def isOpenDefR(H,V,A,Tg):
+
+    global TP 
+
+    T=set() # Tipos procesandose
+    print (A.universe,H.universe())
+    gen=permutations(H.tuple()+list(A.universe-H.universe()),A.relations[Tg[0]].arity)
+
+    next(gen) #Se saltea la primer tupla que es \text{tupla}(H)
+
+    for t in gen:
+
+        if [v for v in V if set(t) in v]:
+            continue
+
+        H0=TupleModelHash(A,t)
+        for HH in T.union(TP):#Es un tipo conocido
+            if H0==HH:
+                if H in TP: #Es un tipo totalmente procesado
+                    V=V+H0.universe() #Pasa a ser viejo
+                if not H0.iso(HH).iso_wrt(Tg): # no preserva Tg
+                    return set()
+                else:
+                    return T
+        if len(H.universe())==len(H0.universe()): #Es un automorfismo
+            if not H.iso(H0).iso_wrt(Tg): # no preserva Tg
+                return set()
+            T.add(H0) #Pasa a ser un tipo en proceso
+        else: #Es un un subiso
+            ts=isOpenDefR(H0,V,A,Tg) #Baja en el árbol
+            if ts:
+                V=V.union(H0.universe()) #Pasa a ser viejo
+                TP.add(ts) # Pasan a ser tipos procesados
+            else:
+                return set()
+    return T
 
 
 

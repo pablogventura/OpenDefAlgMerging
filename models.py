@@ -12,7 +12,7 @@ class Model(object):
         Model
         Input: a universe list, relations dict, operations dict
         """
-        self.universe = list(universe)
+        self.universe = set(universe)
         self.relations = relations
         self.operations = operations
 
