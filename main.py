@@ -137,14 +137,16 @@ def isOpenDef(A, Tg):
     V=set() # Viejos
 
     for t in permutations(list(A.universe),A.relations[Tg[0]].arity):
-        if [v for v in V if set(t) in v]:
+        print (V, t)
+        if set(t).issubset(V):
             continue
         H=TupleModelHash(A,t)
         for HH in T.union(TP):#Es un tipo conocido
             if H==HH:
                 if H in TP: #Es un tipo totalmente procesado
-                    V=V+H.universe() #Pasa a ser viejo
+                    V=V.union(H.universe()) #Pasa a ser viejo
                 if not H.iso(HH).iso_wrt(Tg): # no preserva Tg
+                    print(H.iso(HH))
                     return False
                 else:
                     return True
@@ -152,15 +154,17 @@ def isOpenDef(A, Tg):
         if len(A)==len(H.universe()): #Es un automorfismo
             for HH in T:
                 if not H.iso(HH).iso_wrt(Tg): # Si T=set(), preserva trivialmente
+                    print(H.iso(HH))
                     return False
             T.add(H) #Pasa a ser un tipo en proceso
 
         else: #Es un un subiso
             ts=isOpenDefR(H,V,A,Tg) #Baja en el árbol
             if ts:
-                V=V + H.universe() # Pasa a ser viejo
-                TP=TP + ts #Pasan a ser tipos procesados
+                V=V.union(H.universe()) # Pasa a ser viejo
+                TP=TP.union(ts) #Pasan a ser tipos procesados
             else:
+                print("recursivo")
                 return False
     return True
 
@@ -190,11 +194,13 @@ def isOpenDefR(H,V,A,Tg):
                 if H in TP: #Es un tipo totalmente procesado
                     V=V+H0.universe() #Pasa a ser viejo
                 if not H0.iso(HH).iso_wrt(Tg): # no preserva Tg
+                    print ( H0.iso(HH))
                     return set()
                 else:
                     return T
         if len(H.universe())==len(H0.universe()): #Es un automorfismo
             if not H.iso(H0).iso_wrt(Tg): # no preserva Tg
+                print(H.iso(H0))
                 return set()
             T.add(H0) #Pasa a ser un tipo en proceso
         else: #Es un un subiso
@@ -203,6 +209,7 @@ def isOpenDefR(H,V,A,Tg):
                 V=V.union(H0.universe()) #Pasa a ser viejo
                 TP.add(ts) # Pasan a ser tipos procesados
             else:
+                print ("recursivo")
                 return set()
     return T
 

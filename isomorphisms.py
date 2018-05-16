@@ -74,10 +74,12 @@ class Isomorphism(object):
 
     def iso_wrt(self, subtype):
         if self.source.rels_sizes(subtype) != self.target.rels_sizes(subtype):
+            print("tamaos distintos")
             return False
         for r in subtype:
             for t in self.source.relations[r]:
                 if not self.target.relations[r](*tuple(self(x) for x in t)):
+                    print(t,tuple(self(x) for x in t))
                     return False
         return True
 

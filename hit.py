@@ -44,12 +44,15 @@ class TupleModelHash(object):
     def __eq__(self,other):
         return set(self.T.values()) == set(other.T.values())
     
+    def __hash__(self):
+        return hash(frozenset(self.T))
+    
     def iso(self,other):
         if self == other:
             flatSelfh = [item for sublist in self.H for item in sublist]
             flatOtherh = [item for sublist in other.H for item in sublist]
-            d={(flatSelfh[i],):flatOtherh[i] for i in range(len(flatSelfh))}
-            return Isomorphism(d,None,None,None)
+            d={(flatSelfh[i]):flatOtherh[i] for i in range(len(flatSelfh))}
+            return Isomorphism(d,self.model.restrict(self.universe()),other.model.restrict(other.universe()),None)
         else:
             return None
     
