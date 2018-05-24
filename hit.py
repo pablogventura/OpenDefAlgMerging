@@ -31,6 +31,7 @@ class TupleModelHash(object):
                 o = self.H[-2]
                 for tup in product(flath, repeat=ar):
                     i += 1  
+                    import ipdb;ipdb.set_trace()
                     if any(t in o for t in tup):
                         for sym_i,f in enumerate(sorted(ops[ar],key=lambda f: f.sym)):
                             x = f(*tup)
@@ -69,15 +70,37 @@ class TupleModelHash(object):
         result += indent("Type=%s,\n" % dict(self.T))
         result += ")"
         return result
+    
+    def hit_p(self,perm):
+        n=B[-1]
+        pi = perm 
+        s = perm
+        for h in range(1,len(H)):
+            n=1+sum(len(self.generators)**self.model.operations[op].arity for op in self.model.operations)
+            def pi(i):
+                b = "{0:b}".format(i-(n+1))
+                b = map(int, list(("0" * (len(self.generators) - len(b))) + b))
+                b = map(perm,b)
+                b = int("".join(b),2)
+                return b
+            s_old = s
+            def s(i):
+                if min(T[alpha]) in H[h-1] and i == min(j for j in T[alpha]):
+                    return pi(i)
+                else:
+                    return s_old(i)
+        for alpha in T.keys():
+            for i in T[alpha]:
+                TT[alpha].append(s(i))
+        
+        return TT
 
 
 if __name__ == "__main__":
-    from parser import stdin_parser
-    model = stdin_parser()
+    from parser import parser
+    model = parser()
     ta = [2,1]
-    tb= [0,3]
+    tb= [1,2]
     print(TupleModelHash(model,ta))
-    print(TupleModelHash(model,ta).universe())
     print(TupleModelHash(model,tb))
-    print(TupleModelHash(model,ta).iso(TupleModelHash(model,tb)))#.isomorphism(TupleModelHash(model,[1,0])))
-
+    print(TupleModelHash(model,ta)==TupleModelHash(model,tb))

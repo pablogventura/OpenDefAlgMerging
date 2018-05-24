@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
-
+import sys
 from itertools import count
 
 from models import Model
@@ -25,11 +25,11 @@ class ParserError(Exception):
         self.line = line
         self.message = message
 
-def c_input():
+def c_input(f):
     """
     Clean input
     """
-    line = input()
+    line = f.readline()[:-1] # borro el salto de linea
     if "#" in line:
         line = line[:line.find("#")]
     return line.strip()
@@ -54,10 +54,17 @@ def parse_defop(line):
 def parse_tuple(line):
     return tuple(map(eval,line.split()))
 
-def stdin_parser():
+def parser(path=None):
     """
     New parser
     """
+    if path:
+        try:
+            f=open(path)
+        except:
+            raise ParserError(-1,"File missing")
+    else:
+        f=sys.stdin
     relations={}
     operations={}
     current_rel = None
@@ -68,7 +75,7 @@ def stdin_parser():
     for linenumber in count(1):
         assert (current_op is None or current_rel is None)
         try:
-            line = c_input()
+            line = c_input(f)
             if line:
                 if universe is None:
                     # tiene que ser el universo!
