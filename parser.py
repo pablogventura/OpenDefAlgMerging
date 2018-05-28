@@ -119,6 +119,6 @@ def parser(path=None):
 
 
 if __name__ == "__main__":
-    model = stdin_parser()
+    model = parser()
     print(model)
     print(TupleModelHash(model,[0,1]))

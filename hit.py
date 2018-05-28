@@ -30,8 +30,7 @@ class TupleModelHash(object):
                 flath = [item for sublist in self.H for item in sublist]
                 o = self.H[-2]
                 for tup in product(flath, repeat=ar):
-                    i += 1  
-                    import ipdb;ipdb.set_trace()
+                    i += 1
                     if any(t in o for t in tup):
                         for sym_i,f in enumerate(sorted(ops[ar],key=lambda f: f.sym)):
                             x = f(*tup)
@@ -72,28 +71,31 @@ class TupleModelHash(object):
         return result
     
     def hit_p(self,perm):
-        n=B[-1]
+        print("Hola")
+        TT = defaultdict(set)
+        n=len(self.generators)
         pi = perm 
         s = perm
-        for h in range(1,len(H)):
-            n=1+sum(len(self.generators)**self.model.operations[op].arity for op in self.model.operations)
-            def pi(i):
-                b = "{0:b}".format(i-(n+1))
-                b = map(int, list(("0" * (len(self.generators) - len(b))) + b))
-                b = map(perm,b)
-                b = int("".join(b),2)
-                return b
-            s_old = s
-            def s(i):
-                if min(T[alpha]) in H[h-1] and i == min(j for j in T[alpha]):
-                    return pi(i)
-                else:
-                    return s_old(i)
-        for alpha in T.keys():
-            for i in T[alpha]:
-                TT[alpha].append(s(i))
+        prueba = []
+        for i in range(len(prueba), n):
+            prueba.append(s(i))
+        n = len(self.generators)
+        for b in range(len(self.H)+1):
+            n=sum(n**self.model.operations[op].arity for op in self.model.operations)
+            #if min(T[alpha]) in H[h-1] and i == min(j for j in T[alpha]):
+            print (n)
+            print("entro")
+            for i in range(len(prueba), n):
+                s_i = "{0:b}".format((n+1)-i)
+                s_i = map(int, list(("0" * (len(self.generators) - len(s_i))) + s_i))
+                s_i = map(lambda x: prueba[x],s_i)
+                s_i = int("".join(map(str,s_i)),2)
+                prueba.append(s_i)
+            #for alpha in self.T.keys():
+            #    for i in self.T[alpha]:
+            #        TT[alpha].add(s(i))
         
-        return TT
+        return prueba
 
 
 if __name__ == "__main__":
@@ -101,6 +103,5 @@ if __name__ == "__main__":
     model = parser("./retrombo.model")
     ta = [2,1]
     tb= [1,2]
-    print(TupleModelHash(model,ta))
-    print(TupleModelHash(model,tb))
-    print(TupleModelHash(model,ta)==TupleModelHash(model,tb))
+    f = TupleModelHash(model,ta).hit_p(lambda x: [1,0][x])
+    print (f)
