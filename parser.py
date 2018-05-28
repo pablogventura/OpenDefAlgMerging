@@ -25,11 +25,10 @@ class ParserError(Exception):
         self.line = line
         self.message = message
 
-def c_input(f):
+def c_input(line):
     """
     Clean input
     """
-    line = f.readline()[:-1] # borro el salto de linea
     if "#" in line:
         line = line[:line.find("#")]
     return line.strip()
@@ -72,10 +71,10 @@ def parser(path=None):
     rel_missing_tuples= 0
     op_missing_tuples= 0
     universe=None
-    for linenumber in count(1):
+    for linenumber,line in enumerate(f):
         assert (current_op is None or current_rel is None)
         try:
-            line = c_input(f)
+            line = c_input(line)
             if line:
                 if universe is None:
                     # tiene que ser el universo!
