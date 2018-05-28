@@ -98,7 +98,7 @@ class TupleModelHash(object):
 
 if __name__ == "__main__":
     from parser import parser
-    model = parser()
+    model = parser("./retrombo.model")
     ta = [2,1]
     tb= [1,2]
     print(TupleModelHash(model,ta))

@@ -106,16 +106,15 @@ def parser(path=None):
                         if not op_missing_tuples:
                             operations[current_op.sym] = current_op
                             current_op = None
-        except EOFError:
-            if universe is None:
-                raise ParserError(linenumber,"Universe not defined")
-            if current_rel is not None:
-                raise ParserError(linenumber,"Missing tuples for relation %s" % current_rel.sym)
-            if current_op is not None:
-                raise ParserError(linenumber,"Missing tuples for operation %s" % current_op.sym)
-            return Model(universe, relations, operations)
         except:
             raise ParserError(linenumber,"")
+    if universe is None:
+        raise ParserError(linenumber,"Universe not defined")
+    if current_rel is not None:
+        raise ParserError(linenumber,"Missing tuples for relation %s" % current_rel.sym)
+    if current_op is not None:
+        raise ParserError(linenumber,"Missing tuples for operation %s" % current_op.sym)
+    return Model(universe, relations, operations)
 
 
 
