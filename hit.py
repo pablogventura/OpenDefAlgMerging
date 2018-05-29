@@ -73,35 +73,23 @@ class TupleModelHash(object):
     def hit_p(self,perm):
         print("Hola")
         TT = defaultdict(set)
-        n=len(self.generators)
-        pi = perm 
-        s = perm
-        prueba = []
-        for i in range(len(prueba), n):
-            prueba.append(s(i))
-        n = len(self.generators)
+        n = 0
         for b in range(len(self.H)+1):
-            n=sum(n**self.model.operations[op].arity for op in self.model.operations)
-            #if min(T[alpha]) in H[h-1] and i == min(j for j in T[alpha]):
-            print (n)
+            print (list(range(n,len(perm))))
             print("entro")
-            for i in range(len(prueba), n):
+            for i in range(n,len(perm)):
                 s_i = "{0:b}".format((n+1)-i)
                 s_i = map(int, list(("0" * (len(self.generators) - len(s_i))) + s_i))
-                s_i = map(lambda x: prueba[x],s_i)
+                s_i = map(lambda x: perm[x],s_i)
                 s_i = int("".join(map(str,s_i)),2)
-                prueba.append(s_i)
-            #for alpha in self.T.keys():
-            #    for i in self.T[alpha]:
-            #        TT[alpha].add(s(i))
-        
-        return prueba
+                perm.append(s_i)
+            n+=sum(n**self.model.operations[op].arity for op in self.model.operations)
+        return perm
 
 
 if __name__ == "__main__":
     from parser import parser
     model = parser("./retrombo.model")
     ta = [2,1]
-    tb= [1,2]
-    f = TupleModelHash(model,ta).hit_p(lambda x: [1,0][x])
+    f = TupleModelHash(model,ta).hit_p([1,0])
     print (f)
