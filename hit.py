@@ -3,6 +3,29 @@ from collections import defaultdict
 from misc import indent
 from isomorphisms import Isomorphism
 
+def int2base(x, base, size=None):
+    assert x>=0
+    if x == 0:
+        digits = [0]
+    else:
+        digits = []
+        while x:
+            digits.append(x % base)
+            x = int(x / base)
+        digits.reverse()
+    if size:
+        if size < len(digits):
+            raise ValueError
+        else:
+            digits = ([0] * (size-len(digits))) + digits
+    return digits
+
+def base2int(x,base):
+    result = 0
+    for i,value in enumerate(reversed(x)):
+        result+=value*base**i
+    return result
+    
 class TupleModelHash(object):
     """
     Clase de HIT, toma un modelo ambiente y la tupla generadora
@@ -78,13 +101,15 @@ class TupleModelHash(object):
             print (list(range(n,len(perm))))
             print("entro")
             for i in range(n,len(perm)):
-                s_i = "{0:b}".format((n+1)-i)
-                s_i = map(int, list(("0" * (len(self.generators) - len(s_i))) + s_i))
-                s_i = map(lambda x: perm[x],s_i)
-                s_i = int("".join(map(str,s_i)),2)
+                print(i-n)
+                s_i = int2base(i-n,len(self.generators),self.model.operations["S"].arity) # TODO GENERALIZAR PARAR MUCHAS OPS
+                s_i = [perm[x] for x in s_i]
+                s_i = base2int(s_i,len(self.generators)) + n
                 perm.append(s_i)
             n+=sum(n**self.model.operations[op].arity for op in self.model.operations)
         return perm
+
+
 
 
 if __name__ == "__main__":
