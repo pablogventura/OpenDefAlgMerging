@@ -96,17 +96,17 @@ class TupleModelHash(object):
     def hit_p(self,perm):
         print("Hola")
         TT = defaultdict(set)
-        n = 0
-        for b in range(len(self.H)+1):
-            print (list(range(n,len(perm))))
-            print("entro")
-            for i in range(n,len(perm)):
-                print(i-n)
-                s_i = int2base(i-n,len(self.generators),self.model.operations["S"].arity) # TODO GENERALIZAR PARAR MUCHAS OPS
-                s_i = [perm[x] for x in s_i]
-                s_i = base2int(s_i,len(self.generators)) + n
-                perm.append(s_i)
+        n = len(perm)
+        for b in range(1,len(self.H)+1):
             n+=sum(n**self.model.operations[op].arity for op in self.model.operations)
+            print (list(range(len(perm),n)))
+            print("entro")
+            b_1 = len(perm) # final del bloque anterior
+            for i in range(b_1,n):
+                s_i = int2base(i-b_1,len(self.generators),self.model.operations["S"].arity)
+                s_i = [perm[x] for x in s_i]
+                s_i = base2int(s_i,len(self.generators)) + b_1
+                perm.append(s_i)
         return perm
 
 
