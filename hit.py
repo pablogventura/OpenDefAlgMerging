@@ -44,7 +44,7 @@ class TupleModelHash(object):
         i = len(generators)-1
         self.T = defaultdict(set, {a:{i}  for i, a in enumerate(generators)})
         O = self.H[-1]
-        V=list(generators)
+        self.V=list(generators)
 
         while O:
             self.H.append([])
@@ -57,7 +57,7 @@ class TupleModelHash(object):
                     if any(t in o for t in tup):
                         for sym_i,f in enumerate(sorted(ops[ar],key=lambda f: f.sym)):
                             x = f(*tup)
-                            V.append(x)
+                            self.V.append(x)
                             self.T[x].add(i)
                             if all(x not in h for h in self.H):
                                 self.H[-1].append(x)
@@ -94,19 +94,17 @@ class TupleModelHash(object):
         return result
     
     def hit_p(self,perm):
-        print("Hola")
         TT = defaultdict(set)
         n = len(perm)
         for b in range(1,len(self.H)+1):
-            n+=sum(n**self.model.operations[op].arity for op in self.model.operations)
-            print (list(range(len(perm),n)))
-            print("entro")
-            b_1 = len(perm) # final del bloque anterior
-            for i in range(b_1,n):
-                s_i = int2base(i-b_1,len(self.generators),self.model.operations["S"].arity)
-                s_i = [perm[x] for x in s_i]
-                s_i = base2int(s_i,len(self.generators)) + b_1
-                perm.append(s_i)
+            for op in self.model.operations:
+                n+=n**self.model.operations[op].arity
+                b_1 = len(perm) # final del bloque anterior
+                for i in range(b_1,n):
+                    s_i = int2base(i-b_1,len(self.generators),self.model.operations[op].arity)
+                    s_i = [perm[x] for x in s_i]
+                    s_i = base2int(s_i,len(self.generators)) + b_1
+                    perm.append(s_i)
         return perm
 
 
