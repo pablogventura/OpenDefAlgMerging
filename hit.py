@@ -4,6 +4,7 @@ from misc import indent
 from isomorphisms import Isomorphism
 
 def int2base(x, base, size=None):
+    valor = x
     assert x>=0
     if x == 0:
         digits = [0]
@@ -15,7 +16,7 @@ def int2base(x, base, size=None):
         digits.reverse()
     if size:
         if size < len(digits):
-            raise ValueError
+            raise ValueError("%s en base %s da %s, que no entra en %s digitos" % (valor,base,digits,size))
         else:
             digits = ([0] * (size-len(digits))) + digits
     return digits
@@ -25,6 +26,9 @@ def base2int(x,base):
     for i,value in enumerate(reversed(x)):
         result+=value*base**i
     return result
+
+def permute(l,perm):
+    return [perm[x] for x in l]
     
 class TupleModelHash(object):
     """
@@ -65,7 +69,6 @@ class TupleModelHash(object):
                                 if all(x not in h for h in self.H):
                                     self.H[-1].append(x)
                 O = self.H[-1]
-            self.H.pop()
             self.T = {k:frozenset(self.T[k]) for k in self.T}
     def __eq__(self,other):
         return set(self.T.values()) == set(other.T.values())
@@ -100,12 +103,17 @@ class TupleModelHash(object):
     def hit_p(self,perm):
         sigma = list(perm)
         n = len(perm)
-        for b in range(len(self.H)):
+        H=[]
+        for Ha in self.H: # Ha historia actual
+            H.append(sorted(Ha,key=lambda x:perm[min(self.T[x])]))
+            print (self.H)
+            print(sigma)
+            print (H)
             for op in self.model.operations:
                 n+=n**self.model.operations[op].arity
                 b_1 = len(perm) # final del bloque anterior
                 for i in range(b_1,n):
-                    s_i = int2base(i-b_1,len(self.generators),self.model.operations[op].arity)
+                    s_i = int2base(i-b_1,len(sigma),self.model.operations[op].arity)
                     s_i = [sigma[x] for x in s_i]
                     s_i = base2int(s_i,len(self.generators)) + b_1
                     perm.append(s_i)
@@ -113,9 +121,11 @@ class TupleModelHash(object):
         
         return perm
 
+
+
 if __name__ == "__main__":
     from parser import parser
-    model = parser("./retrombo.model")
-    ta = [2,1]
+    model = parser("./suma4.model")
+    ta = [1,2]
     f = TupleModelHash(model,ta).hit_p([1,0])
     print (f)
