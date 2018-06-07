@@ -28,19 +28,19 @@ def base2int(x,base):
     return result
 
 def permute(l,perm):
-    return [perm[x] for x in l]
+    return [l[perm[i]] for i in range(len(l))]
     
 class TupleModelHash(object):
     """
     Clase de HIT, toma un modelo ambiente y la tupla generadora
     """
-    def __init__(self,model, generators, THV = None):
+    def __init__(self,model, generators, TH = None):
         # input model, generators
         generators = list(generators)
         self.generators = generators
         self.model = model
-        if THV:
-            self.T,self.H,self.V = THV
+        if TH:
+            self.T,self.H = TH
         else:
             ops = model.operations
             ops =defaultdict(set)
@@ -70,6 +70,7 @@ class TupleModelHash(object):
                                     self.H[-1].append(x)
                 O = self.H[-1]
             self.T = {k:frozenset(self.T[k]) for k in self.T}
+            self.H.pop(-1)
     def __eq__(self,other):
         return set(self.T.values()) == set(other.T.values())
     
@@ -121,7 +122,7 @@ class TupleModelHash(object):
         for e in self.T:
              T[e]= frozenset(perm[i] for i in self.T[e])
         
-        return T
+        return TupleModelHash(self.model, permute(self.generators, perm), TH = (T,H))
 
 
 
@@ -130,7 +131,7 @@ if __name__ == "__main__":
     model = parser("./suma4.model")
     ta = [1,2]
     tb = [2,1]
-    fa = TupleModelHash(model,ta).T
+    fa = TupleModelHash(model,ta)
     fb = TupleModelHash(model,tb).hit_p([1,0])
     print (fa)
     print (fb)
