@@ -105,21 +105,23 @@ class TupleModelHash(object):
         n = len(perm)
         H=[]
         for Ha in self.H: # Ha historia actual
+            if not Ha:
+                continue
             H.append(sorted(Ha,key=lambda x:perm[min(self.T[x])]))
-            print (self.H)
-            print(sigma)
-            print (H)
             for op in self.model.operations:
-                n+=n**self.model.operations[op].arity
+                n+=len(sigma)**self.model.operations[op].arity
                 b_1 = len(perm) # final del bloque anterior
                 for i in range(b_1,n):
                     s_i = int2base(i-b_1,len(sigma),self.model.operations[op].arity)
                     s_i = [sigma[x] for x in s_i]
-                    s_i = base2int(s_i,len(self.generators)) + b_1
+                    s_i = base2int(s_i,len(sigma)) + b_1
                     perm.append(s_i)
-        VV = [perm[i] for i in self.V]
+            sigma+=[Ha.index(e)+len(sigma) for e in H[-1]]
+        T = dict()
+        for e in self.T:
+             T[e]= frozenset(perm[i] for i in self.T[e])
         
-        return perm
+        return T
 
 
 
@@ -127,5 +129,8 @@ if __name__ == "__main__":
     from parser import parser
     model = parser("./suma4.model")
     ta = [1,2]
-    f = TupleModelHash(model,ta).hit_p([1,0])
-    print (f)
+    tb = [2,1]
+    fa = TupleModelHash(model,ta).T
+    fb = TupleModelHash(model,tb).hit_p([1,0])
+    print (fa)
+    print (fb)
