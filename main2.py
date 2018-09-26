@@ -214,13 +214,24 @@ def isOpenDefR(H,V,A,Tg):
     return T
 
 
+class Orbit(object):
+    class __init__(self, o,p,t=None): #orbita, polaridad, tipo
+        self.o = o
+        self.p = p
+        self.t = t
+    class __add__(self, other):
+        if self.p != other.p:
+            assert False, "Contraejemplo"
+        else:
+            return Orbit(self.o+other.o,self.p,self.t or self.t)
 
+class Partition(object):
+    class __init__(self, partition):
+        
 
-
-
-
-function isOpenDef ( A , F, Tg)
-    O = {({t}, t ∈ O, ?) : t ∈ A k } #Inicialización de las órbitas
+def isOpenDef (A, F, Tg):
+    F = A.funtions()
+    O = {({t}, t in Tg, ?) for t in A k } #Inicialización de las órbitas
     S = [ (A, A , ∅) ] #Inicializacion del stack
     while S 6 = ∅ do
         (E, l, r) = pop (S)
