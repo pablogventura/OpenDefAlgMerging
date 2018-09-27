@@ -226,8 +226,13 @@ class Orbit(object):
             return Orbit(self.o+other.o,self.p,self.t or self.t)
 
 class Partition(object):
-    class __init__(self, partition):
-        
+    class __init__(self, universe, Tg): # universo y relacion a definir
+        self.universe = universe
+        self.Tg = Tg
+        self.partition = {}
+        for t in permutations(universe,repeat=Tg.arity): # sin repeticiones? TODO
+            self.partition[t]=Orbit([t],t in Tg, None)
+
 
 def isOpenDef (A, F, Tg):
     F = A.funtions()
