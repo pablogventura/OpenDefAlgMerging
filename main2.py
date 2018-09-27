@@ -234,19 +234,14 @@ class Partition(object):
             self.partition[t]=Orbit([t],t in Tg, None)
 
 
-def isOpenDef (A, F, Tg):
-    F = A.funtions()
-    O = {({t}, t in Tg, ?) for t in A k } #Inicialización de las órbitas
-    S = [ (A, A , ∅) ] #Inicializacion del stack
-    while S 6 = ∅ do
-        (E, l, r) = pop (S)
-        while l 6 = ∅ do
-            t = pop (l)
-            u = universoGenerado (l)
-            if
-                |u| = |E| then
-                0 0
-                0
+def isOpenDef (A, Tg):
+    O = Partition(A.universe,Tg) #Inicialización de las órbitas
+    S = [(A, permutations(A.universe,repeat=Tg.arity), set())] #Inicializacion del stack
+    while S:
+        (E, l, r) = S.pop()
+        for t in l:
+            u = A.generateUniverse(l)
+            if len(u) == len(E):
                 if hay (t , e ) ∈ r con e = e then
                     γ = iso (t,t')
                     if ¬ propagar ( γ ,O) then
