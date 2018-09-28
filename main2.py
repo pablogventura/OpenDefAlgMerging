@@ -215,23 +215,29 @@ def isOpenDefR(H,V,A,Tg):
 
 
 class Orbit(object):
-    class __init__(self, o,p,t=None): #orbita, polaridad, tipo
+    def __init__(self, o,p,t=None): #orbita, polaridad, tipo
         self.o = o
         self.p = p
         self.t = t
-    class __add__(self, other):
+    def __add__(self, other):
         if self.p != other.p:
             assert False, "Contraejemplo"
         else:
             return Orbit(self.o+other.o,self.p,self.t or self.t)
 
 class Partition(object):
-    class __init__(self, universe, Tg): # universo y relacion a definir
+    def __init__(self, universe, Tg): # universo y relacion a definir
         self.universe = universe
         self.Tg = Tg
-        self.partition = {}
+        self.partition = {} # indexado con tuplas, contiene la orbita y la polaridad
+        self.types = {} # indexado con tipos, contiene la tupla
         for t in permutations(universe,repeat=Tg.arity): # sin repeticiones? TODO
-            self.partition[t]=Orbit([t],t in Tg, None)
+            self.partition[t]=Orbit([t],t in Tg)
+    def getOrbitByType(self, t):
+        if t in self.types:
+            return self.partition[self.types[t]]
+        else:
+            return None
 
 
 def isOpenDef (A, Tg):
@@ -242,7 +248,8 @@ def isOpenDef (A, Tg):
         for t in l:
             u = A.generateUniverse(l)
             if len(u) == len(E):
-                if hay (t , e ) ∈ r con e = e then
+                
+                if hay (t2 , e2 ) ∈ r con e = e2 then
                     γ = iso (t,t')
                     if ¬ propagar ( γ ,O) then
                         return False
