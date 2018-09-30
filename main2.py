@@ -261,9 +261,9 @@ def isOpenDef (A, Tg):
                     gamma = O[h].iso(t)
                     if not O.propagar(gamma):
                         return False
-                else
+                else:
                     S.append((E,l,r))
-                    S.append(( U k , {t, e}))
+                    S.append((h.structure(),permutations(h.universe(),repeat=Tg.arity) , {h:t}))
                     O.setLabel(t,h) # Etiqueto la orbita de t
                     break
     return True
