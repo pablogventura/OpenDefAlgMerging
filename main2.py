@@ -241,50 +241,32 @@ class Partition(object):
 
 
 def isOpenDef (A, Tg):
-    O = Partition(A.universe,Tg) #Inicialización de las órbitas
-    S = [(A, permutations(A.universe,repeat=Tg.arity), set())] #Inicializacion del stack
+    O = Partition(A.universe,Tg) #Inicialización de las orbitas
+    S = [(A, permutations(A.universe,repeat=Tg.arity), dict())] #Inicializacion del stack
     while S:
         (E, l, r) = S.pop()
         for t in l:
-            u = A.generateUniverse(l)
-            if len(u) == len(E):
-                
-                if hay (t2 , e2 ) ∈ r con e = e2 then
-                    γ = iso (t,t')
-                    if ¬ propagar ( γ ,O) then
+            h = hit(t)
+            u = l.universe()
+            if len(u) == len(E): # nos quedamos en el mismo tamaño
+                if h in r: # es un tipo conocido (un automorfismo para checkear)
+                    gamma = h.iso(r[h])
+                    if not O.propagar(gamma):
                         return False
-                    end if
-                else
-                    (
-                    (t,O)) = e
-                    r = r ∪ {(t, e)}
-                    . Etiqueto la orbita de t
-                    tipo orbitaDe
-                end if
-            else
-                if hay (T u, p, e 0 ) ∈ O con e = e 0
-                    t = Tu[0]
-                    γ = iso (t,t')
-                    if ¬ propagar ( γ ,O) then
-                        . Genera algo mas chico
-                        then
-                        . Tomo el primero como representante
+                else: # es un tipo no conocido de potencial automorfismo
+                    O.setLabel(t,h) #Etiqueto la orbita de t
+                    r[h] = t
+            else: # Genera algo mas chico
+                if h in O: # es de un tipo conocido (un subiso para checkear)
+                    gamma = O[h].iso(t)
+                    if not O.propagar(gamma):
                         return False
-                    end if
                 else
-                    (E,l,r)
-                     
-                    (S, ( U k , {t, e}) )
-                    tipo ( orbitaDe (t,O)) = e
-                    push
-                    push # Etiqueto la orbita de t
+                    S.append((E,l,r))
+                    S.append(( U k , {t, e}))
+                    O.setLabel(t,h) # Etiqueto la orbita de t
                     break
-                end if
-            end if
-        end while
-    end while
     return True
-end function
 
 
 
