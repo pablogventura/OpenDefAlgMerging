@@ -91,6 +91,9 @@ class TupleModelHash(object):
     
     def universe(self):
         return set([item for sublist in self.H for item in sublist])
+
+    def structure(self):
+        return self.model.restrict(self.universe())
     
     def __repr__(self):
         result = "TupleModelHash(\n"
