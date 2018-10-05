@@ -72,16 +72,22 @@ class Partition(object):
         return t in self.types
         
     def propagar(self, gamma):
-        cambio=False        
+        print(self)
+        print("propagar")
+        cambio=True        
         while cambio:
             cambio=False
-            for t in self.orbita:
-                tp=gamma(t)
+            for t in self.partition:
+                print(t)
+                print(gamma)
+                tp=gamma.vcall(t)
+                
                 self.unir(t,tp)
                 cambio = True
                 break
     
     def unir(self, t1, t2):
+        print("unir")
         o1 = self.partition[t1]
         del self.partition[t1]
         o2 = self.partition[t2]
