@@ -25,13 +25,15 @@ class Orbit(object):
         self.o = o
         self.p = p
         self.t = t
+    def __contains__(self, t):
+        return t in self.o
     def __add__(self, other):
         if self.p != other.p:
             assert False, "Contraejemplo"
         else:
             return Orbit(self.o+other.o,self.p,self.t or self.t)
     def __repr__(self):
-        return "(%s,%s,%s)" % (self.o,self.p,self.t)
+        return "(%s,%s,%s)" % (self.o,self.p,str(hash(self.t))[-2:])
 
 class Partition(object):
     def __init__(self, universe, Tg): # universo y relacion a definir
@@ -42,10 +44,15 @@ class Partition(object):
         for t in permutations(universe,r=Tg.arity): # sin repeticiones? TODO
             #import ipdb;ipdb.set_trace()
             self.partition[t]=Orbit([t],t in Tg)
-        #print(self)
     def setType(self, Tuple, Type):
-        assert Type not in self.types
+        #assert Type not in self.types
         self.types[Type]=Tuple
+        self.getOrbit(Tuple).t=Type
+    def getOrbit(self, Tuple):
+        for representative in self.partition:
+            if Tuple in self.partition[representative]:
+                return self.partition[representative]
+        raise ValueError
     def __repr__(self):
         result = "[\n"
         for representante in self.partition:
@@ -75,7 +82,6 @@ class Partition(object):
                 break
     
     def unir(self, t1, t2):
-        print("unir")
         o1 = self.partition[t1]
         del self.partition[t1]
         o2 = self.partition[t2]
@@ -112,11 +118,10 @@ def isOpenDef (A, Tg):
     O = Partition(A.universe,Tg) #Inicialización de las orbitas
     S = [(A, permutations(A.universe,r=Tg.arity), MicroPartition())] #Inicializacion del stack
     while S:
-        #print (O)
         (E, l, r) = S.pop()
         for t in l:
             if not O.hasKnowType(t):
-                h = TupleModelHash(A,t)
+                h = TupleModelHash(E,t)
                 u = h.universe()
                 if len(u) == len(E): # nos quedamos en el mismo tamaño
                     if h in r: # es un tipo conocido (un automorfismo para checkear)
@@ -133,11 +138,10 @@ def isOpenDef (A, Tg):
                         O.propagar(gamma)
                     else:
                         S.append((E,l,r))
-                        S.append((h.universe(),permutations(h.universe(),r=Tg.arity) , MicroPartition({h:t})))
+                        S.append((h.structure(),permutations(h.universe(),r=Tg.arity) , MicroPartition({h:t})))
                         O.setType(t,h) # Etiqueto la orbita de t
                         break
-    print (O)
-    print (len(O))
+    print(O)
     return True
 
 

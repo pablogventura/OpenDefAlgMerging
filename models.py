@@ -39,7 +39,10 @@ class Model(object):
         relations={}
         for r in self.relations:
             relations[r]=self.relations[r].restrict(subuniverse)
-        return Model(subuniverse,relations,{})
+        operations={}
+        for o in self.operations:
+            operations[o]=self.operations[o].restrict(subuniverse)
+        return Model(subuniverse,relations,operations)
 
 
     @lru_cache(maxsize=None)
