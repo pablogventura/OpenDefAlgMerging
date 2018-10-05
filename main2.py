@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 #!/usr/bin/env python
 from counterexample import Counterexample
 from hit import TupleModelHash
@@ -29,6 +30,8 @@ class Orbit(object):
             assert False, "Contraejemplo"
         else:
             return Orbit(self.o+other.o,self.p,self.t or self.t)
+    def __repr__(self):
+        return "(%s,%s,%s)" % (self.o,self.p,self.t)
 
 class Partition(object):
     def __init__(self, universe, Tg): # universo y relacion a definir
@@ -37,11 +40,27 @@ class Partition(object):
         self.partition = {} # indexado con tuplas, contiene la orbita
         self.types = {} # indexado con tipos, contiene la tupla
         for t in permutations(universe,r=Tg.arity): # sin repeticiones? TODO
+            #import ipdb;ipdb.set_trace()
             self.partition[t]=Orbit([t],t in Tg)
-
+        #print(self)
     def setType(self, Tuple, Type):
         assert Type not in self.types
         self.types[Type]=Tuple
+    def __repr__(self):
+        result = "[\n"
+        for representante in self.partition:
+            result += "\t" + repr(self.partition[representante]) + "\n"
+        result += "]\n"
+        return result
+    def getType(self, Tuple):
+        for h in self.types:
+            if Tuple in self.types[h]:
+                return h
+        return None
+    
+    def __len__(self):
+        return len(self.partition)
+
     def __contains__(self, t):
         return t in self.types
         
@@ -56,6 +75,7 @@ class Partition(object):
                 break
     
     def unir(self, t1, t2):
+        print("unir")
         o1 = self.partition[t1]
         del self.partition[t1]
         o2 = self.partition[t2]
@@ -65,7 +85,16 @@ class Partition(object):
             self.types[union.t] = union.o
         for t in union.o:
             self.partition[t1]
-
+    def __getitem__(self, key):
+        for h in self.types.keys():
+            if h == key:
+                return h
+                
+    def hasKnowType(self, t):
+        return self.getType(t) is not None
+                
+                
+                
 class MicroPartition(object):
     def __init__(self,d=dict()):
         self.dict = d
@@ -74,7 +103,7 @@ class MicroPartition(object):
         return h in self.dict
     def representative(self, h):
         return self.dictOfKeys[h]
-    def setType(self, t, h):
+    def newType(self, t, h):
         self.dict[h]=t
         self.dictOfKeys[h]=h
 
@@ -83,40 +112,33 @@ def isOpenDef (A, Tg):
     O = Partition(A.universe,Tg) #Inicialización de las orbitas
     S = [(A, permutations(A.universe,r=Tg.arity), MicroPartition())] #Inicializacion del stack
     while S:
+        #print (O)
         (E, l, r) = S.pop()
         for t in l:
-            h = TupleModelHash(E,t)
-            u = h.universe()
-            if len(u) == len(E): # nos quedamos en el mismo tamaño
-                if h in r: # es un tipo conocido (un automorfismo para checkear)
-                    
-                    gamma = h.iso(r.representative(h))
-                    
-                    if not O.propagar(gamma):
-                        return False
-                else: # es un tipo no conocido de potencial automorfismo
-                    O.setType(t,h) #Etiqueto la orbita de t
-                    r.setType(t,h)
-            else: # Genera algo mas chico
-                if h in O: # es de un tipo conocido (un subiso para checkear)
-                    gamma = O[h].iso(t)
-                    if not O.propagar(gamma):
-                        return False
-                else:
-                    S.append((E,l,r))
-                    S.append((h.structure(),permutations(h.universe(),r=Tg.arity) , MicroPartition({h:t})))
-                    O.setType(t,h) # Etiqueto la orbita de t
-                    break
+            if not O.hasKnowType(t):
+                h = TupleModelHash(A,t)
+                u = h.universe()
+                if len(u) == len(E): # nos quedamos en el mismo tamaño
+                    if h in r: # es un tipo conocido (un automorfismo para checkear)
+                        
+                        gamma = h.iso(r.representative(h))
+                        
+                        O.propagar(gamma)
+                    else: # es un tipo no conocido de potencial automorfismo
+                        O.setType(t,h) #Etiqueto la orbita de t
+                        r.newType(t,h) 
+                else: # Genera algo mas chico
+                    if h in O: # es de un tipo conocido (un subiso para checkear)
+                        gamma = O[h].iso(h)
+                        O.propagar(gamma)
+                    else:
+                        S.append((E,l,r))
+                        S.append((h.universe(),permutations(h.universe(),r=Tg.arity) , MicroPartition({h:t})))
+                        O.setType(t,h) # Etiqueto la orbita de t
+                        break
+    print (O)
+    print (len(O))
     return True
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == "__main__":
