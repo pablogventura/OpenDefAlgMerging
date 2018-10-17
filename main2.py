@@ -72,22 +72,15 @@ class Partition(object):
         return t in self.types
         
     def propagar(self, gamma):
-        print(self)
-        print("propagar")
-        cambio=True        
-        while cambio:
-            cambio=False
-            for t in self.partition:
-                print(t)
-                print(gamma)
-                tp=gamma.vcall(t)
-                
+        for t in self.partition:
+            tp=gamma.vcall(t)
+            if None not in tp:
                 self.unir(t,tp)
-                cambio = True
-                break
     
     def unir(self, t1, t2):
-        print("unir")
+        print("unir %s con %s" % (t1,t2))
+        if t1 == t2:
+            return
         o1 = self.partition[t1]
         del self.partition[t1]
         o2 = self.partition[t2]
@@ -125,7 +118,10 @@ def isOpenDef (A, Tg):
     S = [(A, permutations(A.universe,r=Tg.arity), MicroPartition())] #Inicializacion del stack
     while S:
         (E, l, r) = S.pop()
+        print (O)
+        print ("pop")
         for t in l:
+            print (t)
             if not O.hasKnowType(t):
                 h = TupleModelHash(E,t)
                 u = h.universe()
@@ -145,10 +141,12 @@ def isOpenDef (A, Tg):
                     else:
                         S.append((E,l,r))
                         S.append((h.structure(),permutations(h.universe(),r=Tg.arity) , MicroPartition({h:t})))
+                        print ("append")
                         O.setType(t,h) # Etiqueto la orbita de t
                         break
     print(O)
     return True
+
 
 
 if __name__ == "__main__":
