@@ -52,7 +52,14 @@ class Partition(object):
         for representative in self.partition:
             if Tuple in self.partition[representative]:
                 return self.partition[representative]
-        raise ValueError
+        raise ValueError(Tuple)
+    def delOrbit(self, Tuple):
+        
+        for representative in self.partition:
+            if Tuple in self.partition[representative]:
+                break
+        del self.partition[representative]
+
     def __repr__(self):
         result = "[\n"
         for representante in self.partition:
@@ -72,7 +79,7 @@ class Partition(object):
         return t in self.types
         
     def propagar(self, gamma):
-        for t in self.partition:
+        for t in list(self.partition.keys()):
             tp=gamma.vcall(t)
             if None not in tp:
                 self.unir(t,tp)
@@ -81,15 +88,16 @@ class Partition(object):
         print("unir %s con %s" % (t1,t2))
         if t1 == t2:
             return
-        o1 = self.partition[t1]
-        del self.partition[t1]
-        o2 = self.partition[t2]
-        del self.partition[t2]
+        o1 = self.getOrbit(t1)
+        o2 = self.getOrbit(t2)
+        if o1==o2:
+            return
+        self.delOrbit(t1)
+        self.delOrbit(t2)
         union = o1+o2
         if union.t:
             self.types[union.t] = union.o
-        for t in union.o:
-            self.partition[t1]
+        self.partition[t1] = union
     def __getitem__(self, key):
         for h in self.types.keys():
             if h == key:
