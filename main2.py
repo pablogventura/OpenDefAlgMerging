@@ -33,7 +33,7 @@ class Orbit(object):
         else:
             return Orbit(self.o+other.o,self.p,self.t or self.t)
     def __repr__(self):
-        return "(%s,%s,%s)" % (self.o,self.p,str(hash(self.t))[-2:])
+        return "(%s,%s,%s)" % (self.o,self.p,hash(self.t))
 
 class Partition(object):
     def __init__(self, universe, Tg): # universo y relacion a definir
@@ -148,7 +148,7 @@ def isOpenDef (A, Tg):
                         O.propagar(gamma)
                     else:
                         S.append((E,l,r))
-                        S.append((h.structure(),permutations(h.universe(),r=Tg.arity) , MicroPartition({h:t})))
+                        S.append((A,permutations(h.universe(),r=Tg.arity) , MicroPartition({h:t})))
                         print ("append")
                         O.setType(t,h) # Etiqueto la orbita de t
                         break

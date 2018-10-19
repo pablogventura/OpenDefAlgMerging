@@ -75,7 +75,7 @@ class TupleModelHash(object):
         return set(self.T.values()) == set(other.T.values())
     
     def __hash__(self):
-        return hash(frozenset(self.T))
+        return hash(frozenset(self.T.values()))
     
     def iso(self,other):
         if self == other:
@@ -131,10 +131,11 @@ class TupleModelHash(object):
 
 if __name__ == "__main__":
     from parser import parser
-    model = parser("./suma4.model")
-    ta = [1,2]
-    tb = [2,1]
+    model = parser("./cadena4.model")
+    ta = [0,1,2]
+    tb = [0,1,3]
     fa = TupleModelHash(model,ta)
-    fb = TupleModelHash(model,tb).hit_p([1,0])
-    print (fa)
-    print (fb)
+    fb = TupleModelHash(model,tb)#.hit_p([1,0])
+    print (hash(fa))
+    print (hash(fb))
+    print (fa==fb)
