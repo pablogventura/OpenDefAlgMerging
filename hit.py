@@ -60,14 +60,15 @@ class TupleModelHash(object):
                     flath = [item for sublist in self.H for item in sublist]
                     o = self.H[-2]
                     for tup in product(flath, repeat=ar):
-                        i += 1
-                        if any(t in o for t in tup):
-                            for sym_i,f in enumerate(sorted(ops[ar],key=lambda f: f.sym)):
-                                x = f(*tup)
-                                self.V.append(x)
-                                self.T[x].add(i)
-                                if all(x not in h for h in self.H):
-                                    self.H[-1].append(x)
+                        for sym_i,f in enumerate(sorted(ops[ar],key=lambda f: f.sym)):
+                            i += 1
+                            if any(t in o for t in tup):
+                                    print(f.sym)
+                                    x = f(*tup)
+                                    self.V.append(x)
+                                    self.T[x].add(i)
+                                    if all(x not in h for h in self.H):
+                                        self.H[-1].append(x)
                 O = self.H[-1]
             self.T = {k:frozenset(self.T[k]) for k in self.T}
             self.H.pop(-1)
@@ -131,11 +132,12 @@ class TupleModelHash(object):
 
 if __name__ == "__main__":
     from parser import parser
-    model = parser("./cadena4.model")
-    ta = [0,1,2]
-    tb = [0,1,3]
+    model = parser("./romboconinfimo.model")
+    ta = [2,3]
+    tb = [3,2]
     fa = TupleModelHash(model,ta)
     fb = TupleModelHash(model,tb)#.hit_p([1,0])
-    print (hash(fa))
-    print (hash(fb))
+    print (fa)
+    print (fb)
+    print (fb.T.values())
     print (fa==fb)
