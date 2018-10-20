@@ -3,6 +3,8 @@ from collections import defaultdict
 from misc import indent
 from isomorphisms import Isomorphism
 
+d=0
+
 def int2base(x, base, size=None):
     valor = x
     assert x>=0
@@ -36,42 +38,46 @@ class TupleModelHash(object):
     """
     def __init__(self,model, generators, TH = None):
         # input model, generators
+        global d
         generators = list(generators)
         self.generators = generators
         self.model = model
         if TH:
             self.T,self.H = TH
         else:
-            ops = model.operations
-            ops =defaultdict(set)
+            #ops = model.operations
+            ops = defaultdict(set)
             for op in model.operations:
                 ops[model.operations[op].arity].add(model.operations[op])
-            
+
             self.H = [generators]
             i = len(generators)-1
-            self.T = defaultdict(set, {a:{i}  for i, a in enumerate(generators)})
+            self.T = defaultdict(set, {a:{j}  for j, a in enumerate(generators)})
             O = self.H[-1]
-            self.V=list(generators)
+            #self.V=list(generators)
 
             while O:
+                print(O)
                 self.H.append([])
                 for ar in sorted(ops):
-                
                     flath = [item for sublist in self.H for item in sublist]
+                    print(flath)
                     o = self.H[-2]
-                    for tup in product(flath, repeat=ar):
-                        for sym_i,f in enumerate(sorted(ops[ar],key=lambda f: f.sym)):
+                    for sym_i,f in enumerate(sorted(ops[ar],key=lambda f: f.sym)):
+                        for tup in product(flath, repeat=ar):
+                            d+=1
                             i += 1
                             if any(t in o for t in tup):
-                                    print(f.sym)
+                                    
                                     x = f(*tup)
-                                    self.V.append(x)
+                                    #self.V.append(x)
                                     self.T[x].add(i)
                                     if all(x not in h for h in self.H):
                                         self.H[-1].append(x)
                 O = self.H[-1]
             self.T = {k:frozenset(self.T[k]) for k in self.T}
             self.H.pop(-1)
+            print ("D=%s" % d)
     def __eq__(self,other):
         return set(self.T.values()) == set(other.T.values())
     
@@ -132,12 +138,11 @@ class TupleModelHash(object):
 
 if __name__ == "__main__":
     from parser import parser
-    model = parser("./romboconinfimo.model")
+    model = parser("./malvada.model")
     ta = [2,3]
     tb = [3,2]
     fa = TupleModelHash(model,ta)
-    fb = TupleModelHash(model,tb)#.hit_p([1,0])
+    #    fb = TupleModelHash(model,tb)#.hit_p([1,0])
     print (fa)
-    print (fb)
-    print (fb.T.values())
-    print (fa==fb)
+    #print (fb)
+    #print (fa==fb)

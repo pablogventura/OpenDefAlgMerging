@@ -51,6 +51,10 @@ print ("S 2")
 for a,b in product(covers.keys(),repeat=2):
     print ("%s %s %s" % (a,b,supremo(a,b,lleq)))
 print("")
+print ("E 3")
+for a,b,c in product(covers.keys(),repeat=3):
+    print ("%s %s %s %s" % (a,b,c,supremo(a,b,lleq)))
+print("")
 print ("I 2")
 for a,b in product(covers.keys(),repeat=2):
     print ("%s %s %s" % (a,b,infimo(a,b,leq)))
