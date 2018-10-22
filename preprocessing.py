@@ -37,29 +37,6 @@ def preprocesamiento(T):
         for t in q[p]:
             result[-1].add(tuple(t[i] for i in indices))
     return result
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     
     
