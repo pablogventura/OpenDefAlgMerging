@@ -158,8 +158,12 @@ class TupleModelHash():
 
 
 if __name__ == "__main__":
+    """
+    Para testeo
+    """
+    
     from parser import parser
-    MODEL = parser("./malvada.model")
+    MODEL = parser("./model_examples/malvada.model")
     TA = [2, 3]
     TB = [3, 2]
     FA = TupleModelHash(MODEL, TA)
