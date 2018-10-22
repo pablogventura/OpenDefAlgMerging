@@ -1,234 +1,159 @@
 # -*- coding: utf-8 -*-
+
 #!/usr/bin/env python
 from counterexample import Counterexample
 from hit import TupleModelHash
-from parser import stdin_parser
+from parser import parser
 
-from itertools import chain,permutations
+from itertools import permutations
 from misc import indent
 from collections import defaultdict
 
 
 def main():
-    model = stdin_parser()
+    model = parser()
     assert len(model.relations) == 1
     targets_rel = tuple(sym for sym in model.relations.keys() if sym[0] == "T")
     if not targets_rel:
         print("ERROR: NO TARGET RELATIONS FOUND")
         return
-    print(isOpenDef(model, targets_rel))
+    print(isOpenDef(model, targets_rel[0]))
 
 
-class setSized(object):
-    def __init__(self, values=[]):
-        self.dict = defaultdict(set)
-        for v in values:
-            self.add(v)
+class Orbit(object):
+    def __init__(self, o,p,t=None): #orbita, polaridad, tipo
+        self.o = o
+        self.p = p
+        self.t = t
+    def __contains__(self, t):
+        return t in self.o
+    def __add__(self, other):
+        if self.p != other.p:
+            assert False, "Contraejemplo"
+        else:
+            return Orbit(self.o+other.o,self.p,self.t or self.t)
+    def __repr__(self):
+        return "(%s,%s,%s)" % (self.o,self.p,hash(self.t))
 
-    def add(self, e):
-        self.dict[len(e)].add(e)
-
-    def __iter__(self):
-        print("WARNING: __iter__ setSized")
-        for i in self.sizes():
-            for v in self.iterate(i):
-                yield v
-
-    def __len__(self):
-        return sum(self.len(s) for s in self.sizes())
-
-    def len(self, size):
-        return len(self.dict[size])
-
-    def sizes(self):
-        return sorted(self.dict.keys())
-
-    def iterate(self, size):
-        return iter(self.dict[size])
-
-
-class GenStack(object):
-    def __init__(self, generator):
-        self.stack = [generator]
-        self.history = set()
-
-    def add(self, generator):
-        self.stack.append(generator)
-
-    def next(self):
-        result = None
-        while result is None or frozenset(result.universe) in self.history:
-            try:
-                result = next(self.stack[-1])
-            except IndexError:
-                raise StopIteration
-            except StopIteration:
-                del self.stack[-1]
-        self.history.add(frozenset(result.universe))
-        return result
-
-
-def is_open_relold(model, target_rels):
-    base_rels = tuple((r for r in model.relations if r not in target_rels))
-    spectrum = sorted(model.spectrum(target_rels), reverse=True)
-    if spectrum:
-        size = spectrum[0]
-    else:
-        size = 0
-    print("Spectrum = %s" % spectrum)
-    isos_count = 0
-    auts_count = 0
-    S = setSized()
-
-    genstack = GenStack(model.substructures(size))
-    try:
-        while True:
-            try:
-                current = genstack.next()
-            except StopIteration:
+class Partition(object):
+    def __init__(self, universe, Tg): # universo y relacion a definir
+        self.universe = universe
+        self.Tg = Tg
+        self.partition = {} # indexado con tuplas, contiene la orbita
+        self.types = {} # indexado con tipos, contiene la tupla
+        for t in permutations(universe,r=Tg.arity): # sin repeticiones? TODO
+            #import ipdb;ipdb.set_trace()
+            self.partition[t]=Orbit([t],t in Tg)
+    def setType(self, Tuple, Type):
+        #assert Type not in self.types
+        self.types[Type]=Tuple
+        self.getOrbit(Tuple).t=Type
+    def getOrbit(self, Tuple):
+        for representative in self.partition:
+            if Tuple in self.partition[representative]:
+                return self.partition[representative]
+        raise ValueError(Tuple)
+    def delOrbit(self, Tuple):
+        
+        for representative in self.partition:
+            if Tuple in self.partition[representative]:
                 break
-            iso = is_isomorphic_to_any(current, S, base_rels)
-            if iso:
-                isos_count += 1
-                if not iso.iso_wrt(target_rels):
-                    raise Counterexample(iso)
-            else:
-                for aut in automorphisms(current, base_rels):
-                    auts_count += 1
-                    if not aut.aut_wrt(target_rels):
-                        raise Counterexample(aut)
-                S.add(current)
+        del self.partition[representative]
 
-                try:
-                    # EL SIGUIENTE EN EL ESPECTRO QUE SEA MAS CHICO QUE LEN DE SUBUNIVERSE
-                    size = next(x for x in spectrum if x < len(current))
-                    genstack.add(current.substructures(size))
-                except StopIteration:
-                    # no tiene mas hijos
-                    pass
-        print("DEFINABLE")
-        print("\nFinal state: ")
+    def __repr__(self):
+        result = "[\n"
+        for representante in self.partition:
+            result += "\t" + repr(self.partition[representante]) + "\n"
+        result += "]\n"
+        return result
+    def getType(self, Tuple):
+        for h in self.types:
+            if Tuple in self.types[h]:
+                return h
+        return None
+    
+    def __len__(self):
+        return len(self.partition)
 
-    except Counterexample as ce:
-        print("NOT DEFINABLE")
-        print("Counterexample:")
-        print(indent(repr(ce.ce)))
-        print("\nState before abort: ")
-    except KeyboardInterrupt:
-        print("CANCELLED")
-        print("\nState before abort: ")
+    def __contains__(self, t):
+        return t in self.types
+        
+    def propagar(self, gamma):
+        for t in list(self.partition.keys()):
+            tp=gamma.vcall(t)
+            if None not in tp:
+                self.unir(t,tp)
+    
+    def unir(self, t1, t2):
+        print("unir %s con %s" % (t1,t2))
+        if t1 == t2:
+            return
+        o1 = self.getOrbit(t1)
+        o2 = self.getOrbit(t2)
+        if o1==o2:
+            return
+        self.delOrbit(t1)
+        self.delOrbit(t2)
+        union = o1+o2
+        if union.t:
+            self.types[union.t] = union.o
+        self.partition[t1] = union
+    def __getitem__(self, key):
+        for h in self.types.keys():
+            if h == key:
+                return h
+                
+    def hasKnowType(self, t):
+        return self.getType(t) is not None
+                
+                
+                
+class MicroPartition(object):
+    def __init__(self,d=dict()):
+        self.dict = d
+        self.dictOfKeys = {k:k for k in d.keys()}
+    def __contains__(self, h):
+        return h in self.dict
+    def representative(self, h):
+        return self.dictOfKeys[h]
+    def newType(self, t, h):
+        self.dict[h]=t
+        self.dictOfKeys[h]=h
 
-    print("  Diversity = %s" % len(S))
-    for size in S.sizes():
-        print("    %s-diversity = %s" % (size, S.len(size)))
-    print("  #Auts = %s" % auts_count)
-    print("  #Isos = %s" % isos_count)
-    print("  %s calls to Minion" % MinionSol.count)
-
-
-
-TP=set()
-def isOpenDef(A, Tg):
-
-    global TP 
-
-    T=set() # Tipos procesandose
-
-    V=set() # Viejos
-
-    for t in permutations(list(A.universe),A.relations[Tg[0]].arity):
-        print (V, t)
-        if set(t).issubset(V):
-            continue
-        H=TupleModelHash(A,t)
-        for HH in T.union(TP):#Es un tipo conocido
-            if H==HH:
-                if H in TP: #Es un tipo totalmente procesado
-                    V=V.union(H.universe()) #Pasa a ser viejo
-                if not H.iso(HH).iso_wrt(Tg): # no preserva Tg
-                    print(H.iso(HH))
-                    return False
-                else:
-                    return True
-        # Es un tipo nuevo
-        if len(A)==len(H.universe()): #Es un automorfismo
-            for HH in T:
-                if not H.iso(HH).iso_wrt(Tg): # Si T=set(), preserva trivialmente
-                    print(H.iso(HH))
-                    return False
-            T.add(H) #Pasa a ser un tipo en proceso
-
-        else: #Es un un subiso
-            ts=isOpenDefR(H,V,A,Tg) #Baja en el árbol
-            if ts:
-                V=V.union(H.universe()) # Pasa a ser viejo
-                TP=TP.union(ts) #Pasan a ser tipos procesados
-            else:
-                print("recursivo")
-                return False
+def isOpenDef (A, Tg):
+    Tg = A.relations[Tg]
+    O = Partition(A.universe,Tg) #Inicialización de las orbitas
+    S = [(A, permutations(A.universe,r=Tg.arity), MicroPartition())] #Inicializacion del stack
+    while S:
+        (E, l, r) = S.pop()
+        print (O)
+        print ("pop")
+        for t in l:
+            print (t)
+            if not O.hasKnowType(t):
+                h = TupleModelHash(E,t)
+                u = h.universe()
+                if len(u) == len(E): # nos quedamos en el mismo tamaño
+                    if h in r: # es un tipo conocido (un automorfismo para checkear)
+                        
+                        gamma = h.iso(r.representative(h))
+                        
+                        O.propagar(gamma)
+                    else: # es un tipo no conocido de potencial automorfismo
+                        O.setType(t,h) #Etiqueto la orbita de t
+                        r.newType(t,h) 
+                else: # Genera algo mas chico
+                    if h in O: # es de un tipo conocido (un subiso para checkear)
+                        gamma = O[h].iso(h)
+                        O.propagar(gamma)
+                    else:
+                        S.append((E,l,r))
+                        S.append((A,permutations(h.universe(),r=Tg.arity) , MicroPartition({h:t})))
+                        print ("append")
+                        O.setType(t,h) # Etiqueto la orbita de t
+                        break
+    print(O)
     return True
-
-
-
-
-
-
-def isOpenDefR(H,V,A,Tg):
-
-    global TP 
-
-    T=set() # Tipos procesandose
-    print (A.universe,H.universe())
-    gen=permutations(H.tuple()+list(A.universe-H.universe()),A.relations[Tg[0]].arity)
-
-    next(gen) #Se saltea la primer tupla que es \text{tupla}(H)
-
-    for t in gen:
-
-        if [v for v in V if set(t) in v]:
-            continue
-
-        H0=TupleModelHash(A,t)
-        for HH in T.union(TP):#Es un tipo conocido
-            if H0==HH:
-                if H in TP: #Es un tipo totalmente procesado
-                    V=V+H0.universe() #Pasa a ser viejo
-                if not H0.iso(HH).iso_wrt(Tg): # no preserva Tg
-                    print ( H0.iso(HH))
-                    return set()
-                else:
-                    return T
-        if len(H.universe())==len(H0.universe()): #Es un automorfismo
-            if not H.iso(H0).iso_wrt(Tg): # no preserva Tg
-                print(H.iso(H0))
-                return set()
-            T.add(H0) #Pasa a ser un tipo en proceso
-        else: #Es un un subiso
-            ts=isOpenDefR(H0,V,A,Tg) #Baja en el árbol
-            if ts:
-                V=V.union(H0.universe()) #Pasa a ser viejo
-                TP.add(ts) # Pasan a ser tipos procesados
-            else:
-                print ("recursivo")
-                return set()
-    return T
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
