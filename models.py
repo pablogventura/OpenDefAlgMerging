@@ -4,8 +4,6 @@
 from itertools import combinations
 from functools import lru_cache
 
-from nuevosub import tipoSub
-
 class PartialOrderedDict(dict):
     def __lt__(self, other): # <
         return self <= other and self != other
