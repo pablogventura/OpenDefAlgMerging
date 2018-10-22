@@ -36,48 +36,37 @@ class TupleModelHash(object):
     """
     Clase de HIT, toma un modelo ambiente y la tupla generadora
     """
-    def __init__(self,model, generators, TH = None):
+    def __init__(self,model, generators):
         # input model, generators
-        global d
         generators = list(generators)
         self.generators = generators
         self.model = model
-        if TH:
-            self.T,self.H = TH
-        else:
-            #ops = model.operations
-            ops = defaultdict(set)
-            for op in model.operations:
-                ops[model.operations[op].arity].add(model.operations[op])
+        
+        ops = defaultdict(set)
+        for op in model.operations:
+            ops[model.operations[op].arity].add(model.operations[op])
 
-            self.H = [generators]
-            i = len(generators)-1
-            self.T = defaultdict(set, {a:{j}  for j, a in enumerate(generators)})
+        self.H = [generators]
+        i = len(generators)-1
+        self.T = defaultdict(set, {a:{j}  for j, a in enumerate(generators)})
+        O = self.H[-1]
+
+        while O:
+            flath = [item for sublist in self.H for item in sublist] # esto estaba abajo de ar, entonces recalculaba el alfabeto cada vez
+            self.H.append([])
+            for ar in sorted(ops):
+                for sym_i,f in enumerate(sorted(ops[ar],key=lambda f: f.sym)):
+                    for tup in product(flath, repeat=ar):
+                        i += 1
+                        if any(t in O for t in tup):
+                                
+                                x = f(*tup)
+                                self.T[x].add(i)
+                                if all(x not in h for h in self.H):
+                                    self.H[-1].append(x)
             O = self.H[-1]
-            #self.V=list(generators)
-
-            while O:
-                print(O)
-                self.H.append([])
-                for ar in sorted(ops):
-                    flath = [item for sublist in self.H for item in sublist]
-                    print(flath)
-                    o = self.H[-2]
-                    for sym_i,f in enumerate(sorted(ops[ar],key=lambda f: f.sym)):
-                        for tup in product(flath, repeat=ar):
-                            d+=1
-                            i += 1
-                            if any(t in o for t in tup):
-                                    
-                                    x = f(*tup)
-                                    #self.V.append(x)
-                                    self.T[x].add(i)
-                                    if all(x not in h for h in self.H):
-                                        self.H[-1].append(x)
-                O = self.H[-1]
-            self.T = {k:frozenset(self.T[k]) for k in self.T}
-            self.H.pop(-1)
-            print ("D=%s" % d)
+        self.T = {k:frozenset(self.T[k]) for k in self.T}
+        self.H.pop(-1)
     def __eq__(self,other):
         return set(self.T.values()) == set(other.T.values())
     
@@ -142,7 +131,7 @@ if __name__ == "__main__":
     ta = [2,3]
     tb = [3,2]
     fa = TupleModelHash(model,ta)
-    #    fb = TupleModelHash(model,tb)#.hit_p([1,0])
+    fb = TupleModelHash(model,tb)#.hit_p([1,0])
     print (fa)
-    #print (fb)
-    #print (fa==fb)
+    print (fb)
+    print (fa==fb)
