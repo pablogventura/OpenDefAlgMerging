@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
 #!/usr/bin/env python
+from itertools import permutations
+
+from parser import parser
 from counterexample import Counterexample
 from hit import TupleModelHash
-from parser import parser
-
-from itertools import permutations
 from misc import indent
-from collections import defaultdict
 
 
 def main():
@@ -20,7 +19,7 @@ def main():
     print(isOpenDef(model, targets_rel[0]))
 
 
-class Orbit(object):
+class Orbit():
     def __init__(self, o, p, t=None):  # orbita, polaridad, tipo
         self.o = o
         self.p = p
@@ -31,15 +30,14 @@ class Orbit(object):
 
     def __add__(self, other):
         if self.p != other.p:
-            assert False, "Contraejemplo"
-        else:
-            return Orbit(self.o+other.o, self.p, self.t or self.t)
+            raise Counterexample((self, other))
+        return Orbit(self.o+other.o, self.p, self.t or self.t)
 
     def __repr__(self):
         return "(%s,%s,%s)" % (self.o, self.p, hash(self.t))
 
 
-class Partition(object):
+class Partition():
     def __init__(self, universe, Tg):  # universo y relacion a definir
         self.universe = universe
         self.Tg = Tg
@@ -61,7 +59,7 @@ class Partition(object):
         raise ValueError(Tuple)
 
     def delOrbit(self, Tuple):
-
+        assert self.partition
         for representative in self.partition:
             if Tuple in self.partition[representative]:
                 break
@@ -108,15 +106,16 @@ class Partition(object):
         self.partition[t1] = union
 
     def __getitem__(self, key):
-        for h in self.types.keys():
+        for h in self.types:
             if h == key:
                 return h
+        return None
 
     def hasKnowType(self, t):
         return self.getType(t) is not None
 
 
-class MicroPartition(object):
+class MicroPartition():
     def __init__(self, d=dict()):
         self.dict = d
         self.dictOfKeys = {k: k for k in d.keys()}
