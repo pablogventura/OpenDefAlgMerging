@@ -12,46 +12,6 @@ from misc import indent
 from isomorphisms import Isomorphism
 
 
-def int2base(number, base, size=None):
-    """
-    Convierte al numero x en base "base"
-    como una lista de largo size de enteros.
-    """
-    valor = number
-    assert number >= 0
-    if number == 0:
-        digits = [0]
-    else:
-        digits = []
-        while number:
-            digits.append(number % base)
-            number = int(number / base)
-        digits.reverse()
-    if size:
-        if size < len(digits):
-            raise ValueError("%s en base %s da %s, que no entra en %s digitos" % (
-                valor, base, digits, size))
-        else:
-            digits = ([0] * (size-len(digits))) + digits
-    return digits
-
-
-def base2int(l_number, base):
-    """
-    Convierte una lista de numeros del 0 a base-1
-    en un numero entero considerando que es una lista
-    de simbolos en base "base"
-    """
-    result = 0
-    for i, value in enumerate(reversed(l_number)):
-        result += value*base**i
-    return result
-
-
-def permute(l, perm):
-    return [l[perm[i]] for i in range(len(l))]
-
-
 class TupleModelHash():
     """
     Clase de HIT, toma un modelo ambiente y la tupla generadora
@@ -144,18 +104,55 @@ class TupleModelHash():
                 n += len(sigma)**self.model.operations[op].arity
                 b_1 = len(perm)  # final del bloque anterior
                 for i in range(b_1, n):
-                    s_i = int2base(i-b_1, len(sigma),
+                    s_i = self._int2base(i-b_1, len(sigma),
                                    self.model.operations[op].arity)
                     s_i = [sigma[x] for x in s_i]
-                    s_i = base2int(s_i, len(sigma)) + b_1
+                    s_i = self._base2int(s_i, len(sigma)) + b_1
                     perm.append(s_i)
             sigma += [Ha.index(e)+len(sigma) for e in H[-1]]
         T = dict()
         for e in self.T:
             T[e] = frozenset(perm[i] for i in self.T[e])
 
-        return TupleModelHash(self.model, permute(self.generator_tuple, perm), th=(T, H))
+        return TupleModelHash(self.model, self._permute(self.generator_tuple, perm), th=(T, H))
+    def _int2base(self,number, base, size=None):
+        """
+        Convierte al numero x en base "base"
+        como una lista de largo size de enteros.
+        """
+        valor = number
+        assert number >= 0
+        if number == 0:
+            digits = [0]
+        else:
+            digits = []
+            while number:
+                digits.append(number % base)
+                number = int(number / base)
+            digits.reverse()
+        if size:
+            if size < len(digits):
+                raise ValueError("%s en base %s da %s, que no entra en %s digitos" % (
+                    valor, base, digits, size))
+            else:
+                digits = ([0] * (size-len(digits))) + digits
+        return digits
 
+
+    def _base2int(self,l_number, base):
+        """
+        Convierte una lista de numeros del 0 a base-1
+        en un numero entero considerando que es una lista
+        de simbolos en base "base"
+        """
+        result = 0
+        for i, value in enumerate(reversed(l_number)):
+            result += value*base**i
+        return result
+
+
+    def _permute(self,l, perm):
+        return [l[perm[i]] for i in range(len(l))]
 
 if __name__ == "__main__":
     """
@@ -167,7 +164,9 @@ if __name__ == "__main__":
     TA = [2, 3]
     TB = [3, 2]
     FA = TupleModelHash(MODEL, TA)
-    FB = TupleModelHash(MODEL, TB)  # .hit_p([1,0])
+    FB = TupleModelHash(MODEL, TB)
+    FC = TupleModelHash(MODEL, TA).hit_p([1,0])
     print(FA)
     print(FB)
-    print(FA == FB)
+    print(FC)
+    print(FA == FB and FA == FC and FB == FC)
