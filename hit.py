@@ -32,9 +32,9 @@ class TupleModelHash():
             self.T, self.H = th
             return
 
-        ops = defaultdict(set)
+        self.ops = defaultdict(set)
         for op in model.operations:
-            ops[model.operations[op].arity].add(model.operations[op])
+            self.ops[model.operations[op].arity].add(model.operations[op])
 
         self.H = [generator_tuple]
         i = len(generator_tuple)-1
@@ -46,8 +46,8 @@ class TupleModelHash():
             # esto estaba abajo de ar, entonces recalculaba el alfabeto cada vez
             flath = [item for sublist in self.H for item in sublist]
             self.H.append([])
-            for ar in sorted(ops):
-                for f in sorted(ops[ar], key=lambda f: f.sym):
+            for ar in sorted(self.ops):
+                for f in sorted(self.ops[ar], key=lambda f: f.sym):
                     for tup in product(flath, repeat=ar):
                         i += 1
                         if any(t in O for t in tup):
@@ -100,15 +100,16 @@ class TupleModelHash():
             if not Ha:
                 continue
             H.append(sorted(Ha, key=lambda x: perm[min(self.T[x])]))
-            for op in self.model.operations:
-                n += len(sigma)**self.model.operations[op].arity
-                b_1 = len(perm)  # final del bloque anterior
-                for i in range(b_1, n):
-                    s_i = self._int2base(i-b_1, len(sigma),
-                                         self.model.operations[op].arity)
-                    s_i = [sigma[x] for x in s_i]
-                    s_i = self._base2int(s_i, len(sigma)) + b_1
-                    perm.append(s_i)
+            for ar in sorted(self.ops):
+                for op in sorted(self.ops[ar], key=lambda f: f.sym):
+                    print((op,type(op)))
+                    n += len(sigma)**op.arity
+                    b_1 = len(perm)  # final del bloque anterior
+                    for i in range(b_1, n):
+                        s_i = self._int2base(i-b_1, len(sigma),op.arity)
+                        s_i = [sigma[x] for x in s_i]
+                        s_i = self._base2int(s_i, len(sigma)) + b_1
+                        perm.append(s_i)
             sigma += [Ha.index(e)+len(sigma) for e in H[-1]]
         T = dict()
         for e in self.T:
