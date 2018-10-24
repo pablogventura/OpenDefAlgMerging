@@ -105,7 +105,7 @@ class TupleModelHash():
                 b_1 = len(perm)  # final del bloque anterior
                 for i in range(b_1, n):
                     s_i = self._int2base(i-b_1, len(sigma),
-                                   self.model.operations[op].arity)
+                                         self.model.operations[op].arity)
                     s_i = [sigma[x] for x in s_i]
                     s_i = self._base2int(s_i, len(sigma)) + b_1
                     perm.append(s_i)
@@ -115,7 +115,8 @@ class TupleModelHash():
             T[e] = frozenset(perm[i] for i in self.T[e])
 
         return TupleModelHash(self.model, self._permute(self.generator_tuple, perm), th=(T, H))
-    def _int2base(self,number, base, size=None):
+
+    def _int2base(self, number, base, size=None):
         """
         Convierte al numero x en base "base"
         como una lista de largo size de enteros.
@@ -138,8 +139,7 @@ class TupleModelHash():
                 digits = ([0] * (size-len(digits))) + digits
         return digits
 
-
-    def _base2int(self,l_number, base):
+    def _base2int(self, l_number, base):
         """
         Convierte una lista de numeros del 0 a base-1
         en un numero entero considerando que es una lista
@@ -150,22 +150,22 @@ class TupleModelHash():
             result += value*base**i
         return result
 
-
-    def _permute(self,l, perm):
+    def _permute(self, l, perm):
         return [l[perm[i]] for i in range(len(l))]
+
 
 if __name__ == "__main__":
     """
     Para testeo
     """
-    
+
     from parser import parser
     MODEL = parser("./model_examples/malvada.model")
     TA = [2, 3]
     TB = [3, 2]
     FA = TupleModelHash(MODEL, TA)
     FB = TupleModelHash(MODEL, TB)
-    FC = TupleModelHash(MODEL, TA).hit_p([1,0])
+    FC = TupleModelHash(MODEL, TA).hit_p([1, 0])
     print(FA)
     print(FB)
     print(FC)

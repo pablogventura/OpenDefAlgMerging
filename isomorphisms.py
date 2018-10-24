@@ -79,7 +79,7 @@ class Isomorphism(object):
         for r in subtype:
             for t in self.source.relations[r]:
                 if not self.target.relations[r](*tuple(self(x) for x in t)):
-                    print(t,tuple(self(x) for x in t))
+                    print(t, tuple(self(x) for x in t))
                     return False
         return True
 
