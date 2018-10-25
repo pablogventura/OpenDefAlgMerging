@@ -2,6 +2,6 @@
 #!/usr/bin/env python
 
 
-class Counterexample(Exception):
-    def __init__(self, ce):
-        self.ce = ce
+class CounterexampleTuples(Exception):
+    def __init__(self, a,b):
+        super(CounterexampleTuples, self).__init__("Orbits %s and %s have the same type, but polarities differ" % (a,b))

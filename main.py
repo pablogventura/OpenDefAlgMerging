@@ -4,7 +4,7 @@
 from itertools import permutations
 
 from parser import parser
-from counterexample import Counterexample
+from counterexample import CounterexampleTuples
 from hit import TupleModelHash
 from misc import indent
 
@@ -30,11 +30,13 @@ class Orbit():
 
     def __add__(self, other):
         if self.p != other.p:
-            raise Counterexample((self, other))
+            raise CounterexampleTuples(self, other)
         return Orbit(self.o+other.o, self.p, self.t or self.t)
 
     def __repr__(self):
-        return "(%s,%s,%s)" % (self.o, self.p, hash(self.t))
+        if self.t is not None:
+            return "(%s,%s,%s)" % (self.o, self.p, str(hash(self.t))[-4:])
+        return "(%s,%s,%s)" % (self.o, self.p, self.t)
 
 
 class Partition():
