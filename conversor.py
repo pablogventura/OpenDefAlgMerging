@@ -1,9 +1,14 @@
-from itertools import product
+from itertools import product, permutations
 
 
-covers = {0: {2, 3}, 1: set(), 2: {1}, 3: {1}}
-n = 5
-#covers = {e:{e+1} for e in range(n)}
+#covers = {0: {2, 3}, 1: set(), 2: {1}, 3: {1}}
+n = 20
+# cadenas:
+covers = {e:{e+1} for e in range(n)}
+covers[n-1] = set()
+
+#covers[0] = set(range(n-1))
+#covers = {e:{n-1} for e in range(1,n)}
 #covers[n-1] = set()
 
 lleq = dict(covers)
@@ -55,15 +60,15 @@ print("S 2")
 for a, b in product(covers.keys(), repeat=2):
     print("%s %s %s" % (a, b, supremo(a, b, lleq)))
 print("")
-print("E 3")
-for a, b, c in product(covers.keys(), repeat=3):
-    print("%s %s %s %s" % (a, b, c, supremo(a, b, lleq)))
+#print("E 3")
+#for a, b, c in product(covers.keys(), repeat=3):
+#    print("%s %s %s %s" % (a, b, c, supremo(a, b, lleq)))
 print("")
 print("I 2")
 for a, b in product(covers.keys(), repeat=2):
     print("%s %s %s" % (a, b, infimo(a, b, leq)))
 print("")
-print("T0 %s 2" % len(covers.keys())**2)
-for t in product(covers.keys(), repeat=2):
+print("T0 %s 4" % len(list(permutations(covers.keys(), r=4))))
+for t in permutations(covers.keys(), r=4):
     print(" ".join(map(str, t)))
 print("")

@@ -117,7 +117,7 @@ def parser(path=None):
             raise ParserError(linenumber, "")
     if universe is None:
         raise ParserError(linenumber, "Universe not defined")
-    if current_rel is not None:
+    if current_rel is not None and not rel_missing_tuples:
         raise ParserError(
             linenumber, "Missing tuples for relation %s" % current_rel.sym)
     if current_op is not None:

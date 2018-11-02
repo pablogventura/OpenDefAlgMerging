@@ -47,7 +47,7 @@ class Partition():
         self.types = {}  # indexado con tipos, contiene la tupla
         for t in permutations(universe, r=Tg.arity):  # sin repeticiones? TODO
             #import ipdb;ipdb.set_trace()
-            self.partition[t] = Orbit([t], t in Tg)
+            self.partition[t] = Orbit([t], t in Tg) #TODO hacer durante el parseo, si esta en la relacion queda con true y el resto false
 
     def setType(self, Tuple, Type):
         #assert Type not in self.types
@@ -93,7 +93,8 @@ class Partition():
                 self.unir(t, tp)
 
     def unir(self, t1, t2):
-        print("unir %s con %s" % (t1, t2))
+        #print("unir %s con %s" % (t1, t2))
+        print (len(self))
         if t1 == t2:
             return
         o1 = self.getOrbit(t1)
@@ -139,11 +140,12 @@ def isOpenDef(A, Tg):
     # Inicializacion del stack
     S = [(A, permutations(A.universe, r=Tg.arity), MicroPartition())]
     while S:
+        print ("*")
         (E, l, r) = S.pop()
-        print(O)
-        print("pop")
+        #print(O)
+        #print("pop")
         for t in l:
-            print(t)
+            #print(t)
             if not O.hasKnowType(t):
                 h = TupleModelHash(E, t)
                 u = h.universe()
@@ -166,10 +168,11 @@ def isOpenDef(A, Tg):
                         S.append((E, l, r))
                         S.append(
                             (A, permutations(h.universe(), r=Tg.arity), MicroPartition({h: t})))
-                        print("append")
+                        #print("append")
                         O.setType(t, h)  # Etiqueto la orbita de t
                         break
     print(O)
+    print(len(O))
     return True
 
 
