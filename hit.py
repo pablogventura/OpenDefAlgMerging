@@ -88,7 +88,7 @@ class TupleModelHash():
         result = "TupleModelHash(\n"
         result += indent("Tuple=%s,\n" % self.generator_tuple)
         result += indent("History=%s,\n" % self.H)
-        result += indent("Type=%s,\n" % dict(self.T))
+        result += indent("Type=%s,\n" % {k:sorted(self.T[k]) for k in self.T})
         result += ")"
         return result
 
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     """
 
     from parser import parser
-    MODEL = parser("./model_examples/malvada.model")
+    MODEL = parser("./model_examples/retrombo2.model")
     TA = [2, 3]
     TB = [3, 2]
     FA = TupleModelHash(MODEL, TA)
