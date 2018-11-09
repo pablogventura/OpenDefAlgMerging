@@ -4,7 +4,6 @@ import sys
 
 from models import Model
 from relops import Relation, Operation
-from hit import TupleModelHash
 
 # parsing operations and relations
 # operations format:
@@ -129,4 +128,3 @@ def parser(path=None):
 if __name__ == "__main__":
     MODEL = parser()
     print(MODEL)
-    print(TupleModelHash(MODEL, [0, 1]))
