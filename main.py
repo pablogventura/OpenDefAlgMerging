@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
 
 #!/usr/bin/env python
-from itertools import permutations
+from itertools import permutations, chain
 
 from parser import parser
 from counterexample import CounterexampleTuples
 from hit import TupleModelHash
 from misc import indent
-
+import sys
 
 def main():
-    model = parser()
-    assert len(model.relations) == 1
-    targets_rel = tuple(sym for sym in model.relations.keys() if sym[0] == "T")
-    if not targets_rel:
+    model = parser(sys.argv[1])
+    targets_rels = tuple(sym for sym in model.relations.keys() if sym[0] == "T")
+    if not targets_rels:
         print("ERROR: NO TARGET RELATIONS FOUND")
         return
-    print(isOpenDef(model, targets_rel[0]))
+    print(isOpenDef(model, targets_rels))
 
 
 class Orbit():
@@ -31,7 +30,13 @@ class Orbit():
     def __add__(self, other):
         if self.p != other.p:
             raise CounterexampleTuples(self, other)
-        return Orbit(self.o+other.o, self.p, self.t or self.t)
+        if self.t is not None:
+            t = self.t
+        elif other.t is not None:
+            t = other.t
+        else:
+            t = None
+        return Orbit(self.o+other.o, self.p, t)
 
     def __repr__(self):
         if self.t is not None:
@@ -39,15 +44,16 @@ class Orbit():
         return "(%s,%s,%s)" % (self.o, self.p, self.t)
 
 
+
 class Partition():
-    def __init__(self, universe, Tg):  # universo y relacion a definir
+    def __init__(self, universe, arity, Tgs):  # universo y relacion a definir, Tgs debe venir ordenado
         self.universe = universe
-        self.Tg = Tg
+        self.arity = arity
         self.partition = {}  # indexado con tuplas, contiene la orbita
         self.types = {}  # indexado con tipos, contiene la tupla
-        for t in permutations(universe, r=Tg.arity):  # sin repeticiones? TODO
+        for t in permutations(universe, r=arity):  # TODO solo cuando la aridad coincide con la relacion
             #import ipdb;ipdb.set_trace()
-            self.partition[t] = Orbit([t], t in Tg) #TODO hacer durante el parseo, si esta en la relacion queda con true y el resto false
+            self.partition[t] = Orbit([t], tuple(t in Tg for Tg in Tgs)) #TODO hacer durante el parseo, si esta en la relacion queda con true y el resto false
 
     def setType(self, Tuple, Type):
         #assert Type not in self.types
@@ -93,12 +99,12 @@ class Partition():
                 self.unir(t, tp)
 
     def unir(self, t1, t2):
-        #print("unir %s con %s" % (t1, t2))
-        print (len(self))
+        #print (len(self))
         if t1 == t2:
             return
         o1 = self.getOrbit(t1)
         o2 = self.getOrbit(t2)
+        print("unir %s con %s" % (o1, o2))
         if o1 == o2:
             return
         self.delOrbit(t1)
@@ -107,6 +113,7 @@ class Partition():
         if union.t:
             self.types[union.t] = union.o
         self.partition[t1] = union
+        print(union)
 
     def __getitem__(self, key):
         for h in self.types:
@@ -117,6 +124,9 @@ class Partition():
     def hasKnowType(self, t):
         return self.getType(t) is not None
 
+def propagarGrosa(Os, gamma):
+    for k in Os:
+        Os[k].propagar(gamma)
 
 class MicroPartition():
     def __init__(self, d=dict()):
@@ -134,19 +144,26 @@ class MicroPartition():
         self.dictOfKeys[h] = h
 
 
-def isOpenDef(A, Tg):
-    Tg = A.relations[Tg]
-    O = Partition(A.universe, Tg)  # Inicialización de las orbitas
+def isOpenDef(A, Tgs):
+    Tgs = sorted([A.relations[Tg] for Tg in Tgs])
+    spectrum = list(sorted({Tg.arity for Tg in Tgs},reverse=True))
+    Os = {e:Partition(A.universe, e, Tgs) for e in spectrum}  # Inicialización de las orbitas
     # Inicializacion del stack
-    S = [(A, permutations(A.universe, r=Tg.arity), MicroPartition())]
+    S = [(A, chain(*[permutations(A.universe, r=e) for e in spectrum]),{e:MicroPartition() for e in spectrum})]
+    #assert False
     while S:
-        print ("*")
-        (E, l, r) = S.pop()
+        #print ("*")
+        (E, l, rs) = S.pop()
         #print(O)
         #print("pop")
         for t in l:
             #print(t)
+            r= rs[len(t)]
+            O = Os[len(t)]
+            #print(t)
             if not O.hasKnowType(t):
+                print("toca %s" % str(t))
+                
                 h = TupleModelHash(E, t)
                 u = h.universe()
                 if len(u) == len(E):  # nos quedamos en el mismo tamaño
@@ -155,24 +172,31 @@ def isOpenDef(A, Tg):
 
                         gamma = h.iso(r.representative(h))
 
-                        O.propagar(gamma)
+                        propagarGrosa(Os,gamma)
                     else:  # es un tipo no conocido de potencial automorfismo
                         O.setType(t, h)  # Etiqueto la orbita de t
+                        #if sorted(t) == [2,3]:
+                        #    import ipdb;ipdb.set_trace()
                         r.newType(t, h)
                 else:  # Genera algo mas chico
                     # es de un tipo conocido (un subiso para checkear)
                     if h in O:
                         gamma = O[h].iso(h)
-                        O.propagar(gamma)
+                        propagarGrosa(Os,gamma)
                     else:
-                        S.append((E, l, r))
-                        S.append(
-                            (A, permutations(h.universe(), r=Tg.arity), MicroPartition({h: t})))
+                        S.append((E, l, rs))
+                        mps= {len(t):MicroPartition({h: t})}
+                        for e in spectrum:
+                            if e not in mps:
+                                mps[e]=MicroPartition()
+                        S.append((A, chain(*[permutations(h.universe(), r=e) for e in spectrum]),mps))
                         #print("append")
+                        #if sorted(t) == [2,3]:
+                        #    import ipdb;ipdb.set_trace()
                         O.setType(t, h)  # Etiqueto la orbita de t
                         break
-    print(O)
-    print(len(O))
+    print(Os)
+    print(tuple(len(Os[O]) for O in Os))
     return True
 
 

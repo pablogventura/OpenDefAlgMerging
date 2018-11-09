@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
+from functools import total_ordering
 
+@total_ordering
 class Relation(object):
     """
     Relation
@@ -40,6 +42,16 @@ class Relation(object):
             if set(t) <= subuniverse:
                 result.add(t)
         return result
+
+    def __eq__(self, other):
+        return (self.sym,self.r) == (other.sym,other.r)
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __lt__(self, other):
+        return self.arity > other.arity or self.sym < self.sym # TODO no ordena bien los symbolos
+
 
 
 class Operation(object):
