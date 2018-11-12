@@ -4,6 +4,7 @@ import sys
 
 from models import Model
 from relops import Relation, Operation
+import preprocessing
 
 # parsing operations and relations
 # operations format:
@@ -56,7 +57,7 @@ def parse_tuple(line):
     return tuple(map(eval, line.split()))
 
 
-def parser(path=None):
+def parser(path=None, preprocess=True):
     """
     New parser
     """
@@ -122,6 +123,17 @@ def parser(path=None):
     if current_op is not None:
         raise ParserError(
             linenumber, "Missing tuples for operation %s" % current_op.sym)
+    
+    if preprocess:
+        prep_relations = set()
+        for sym in relations:
+            if sym.startswith("T"):
+                rel = relations[sym]
+                prep_relations = prep_relations.union(preprocessing.preprocesamiento(rel.r))
+        relations = {sym:relations[sym] for sym in relations if not sym.startswith("T")}
+        for i,rel in enumerate(prep_relations):
+            relations["T%s" % i]=Relation("T%s" % i, len(next(iter(rel))), rel)
+
     return Model(universe, relations, operations)
 
 

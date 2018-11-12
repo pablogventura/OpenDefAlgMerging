@@ -9,16 +9,16 @@ class Relation(object):
     Relation
     """
 
-    def __init__(self, sym, arity):
+    def __init__(self, sym, arity, rel=set()):
         self.sym = sym
         self.arity = arity
-        self.r = set()
+        self.r = rel
 
     def add(self, t):
         self.r.add(t)
 
     def __repr__(self):
-        return repr(self.r)
+        return "%s : %s" % (self.sym,self.r)
 
     def __call__(self, *args):
         return args in self.r
@@ -68,7 +68,7 @@ class Operation(object):
         self.op[t[:-1]] = t[-1]
 
     def __repr__(self):
-        return repr(self.op)
+        return "%s : %s" % (self.sym,self.op)
 
     def __call__(self, *args):
         return self.op[args]

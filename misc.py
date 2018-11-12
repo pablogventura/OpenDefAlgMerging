@@ -19,6 +19,7 @@ def indent(text):
         hola
     <BLANKLINE>
     """
+    text = str(text)
     text = "  " + text.strip("\n")
     return text.replace('\n', '\n  ') + "\n"
 

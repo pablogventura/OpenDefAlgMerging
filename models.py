@@ -3,7 +3,7 @@
 
 from itertools import combinations
 from functools import lru_cache
-
+from misc import indent
 
 class PartialOrderedDict(dict):
     def __lt__(self, other):  # <
@@ -52,7 +52,14 @@ class Model(object):
         return PartialOrderedDict({r: len(self.relations[r]) for r in subtype})
 
     def __repr__(self):
-        return ("Model(universe=%s,relations=%s,operations=%s)" % (self.universe, self.relations, self.operations))
+        result = "Model(universe=%s,\nrelations=\n" % self.universe
+        for sym in sorted(self.relations):
+            result += indent(self.relations[sym]) + "\n"
+        result += "operations=\n"
+        for sym in sorted(self.operations):
+            result += indent(self.operations[sym])  + "\n"
+        result += ")"
+        return result
 
     def __len__(self):
         return len(self.universe)

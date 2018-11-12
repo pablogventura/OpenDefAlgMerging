@@ -39,4 +39,4 @@ def preprocesamiento(T):
         result.append(set())
         for t in q[p]:
             result[-1].add(tuple(t[i] for i in indices))
-    return result
+    return set(frozenset(e) for e in result)
