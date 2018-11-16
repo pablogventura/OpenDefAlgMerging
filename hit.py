@@ -26,6 +26,7 @@ class TupleModelHash():
         generator_tuple = list(generator_tuple)
         self.generator_tuple = generator_tuple
         self.model = model
+        self.V = list(generator_tuple)
 
         if th:
             # es un hit creado a partir de datos ya listos
@@ -50,9 +51,11 @@ class TupleModelHash():
                 for f in sorted(self.ops[ar], key=lambda f: f.sym):
                     for tup in product(flath, repeat=ar):
                         i += 1
+                        self.V.append(str(f(*tup)))
                         if any(t in O for t in tup):
                             x = f(*tup)
                             self.T[x].add(i)
+                            self.V[-1]= x
                             if all(x not in h for h in self.H):
                                 self.H[-1].append(x)
             O = self.H[-1]
@@ -89,6 +92,7 @@ class TupleModelHash():
         result += indent("Tuple=%s,\n" % self.generator_tuple)
         result += indent("History=%s,\n" % self.H)
         result += indent("Type=%s,\n" % {k:sorted(self.T[k]) for k in self.T})
+        result += indent("V=%s,\n" % self.V)
         result += ")"
         return result
 
@@ -96,26 +100,33 @@ class TupleModelHash():
         sigma = list(perm)
         n = len(perm)
         H = []
+        b_1=0
         for Ha in self.H:  # Ha historia actual
             if not Ha:
                 continue
-            H.append(sorted(Ha, key=lambda x: perm[min(self.T[x])]))
+            H.append(sorted(Ha, key=lambda x: perm[min(set(self.T[x]).intersection(set(range(b_1,n))))]))
             for ar in sorted(self.ops):
                 for op in sorted(self.ops[ar], key=lambda f: f.sym):
-                    print((op,type(op)))
-                    n += len(sigma)**op.arity
                     b_1 = len(perm)  # final del bloque anterior
+                    n += len(sigma)**op.arity
                     for i in range(b_1, n):
                         s_i = self._int2base(i-b_1, len(sigma),op.arity)
                         s_i = [sigma[x] for x in s_i]
+                        print(sigma)
                         s_i = self._base2int(s_i, len(sigma)) + b_1
                         perm.append(s_i)
             sigma += [Ha.index(e)+len(sigma) for e in H[-1]]
         T = dict()
         for e in self.T:
             T[e] = frozenset(perm[i] for i in self.T[e])
-
-        return TupleModelHash(self.model, self._permute(self.generator_tuple, perm), th=(T, H))
+            d = defaultdict(lambda :" ", {perm[i]:e for i,e in enumerate(self.V)})
+        V=[]
+        for i in range(max(d.keys())+1):
+            V.append(d[i])
+            
+        result = TupleModelHash(self.model, self._permute(self.generator_tuple, perm), th=(T, H)) 
+        result.V=V
+        return result
 
     def _int2base(self, number, base, size=None):
         """
@@ -161,9 +172,9 @@ if __name__ == "__main__":
     """
 
     from parser import parser
-    MODEL = parser("./model_examples/retrombo2.model")
-    TA = [2, 3]
-    TB = [3, 2]
+    MODEL = parser("./model_examples/romboletras.model")
+    TA = ["c", "d"]
+    TB = ["d", "c"]
     FA = TupleModelHash(MODEL, TA)
     FB = TupleModelHash(MODEL, TB)
     FC = TupleModelHash(MODEL, TA).hit_p([1, 0])
