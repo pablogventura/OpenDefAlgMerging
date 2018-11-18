@@ -139,4 +139,4 @@ def parser(path=None, preprocess=True):
 
 if __name__ == "__main__":
     MODEL = parser()
-    print(MODEL)
+    #print(MODEL)

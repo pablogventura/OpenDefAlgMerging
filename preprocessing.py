@@ -34,6 +34,7 @@ def limpia(t):
 def preprocesamiento(T):
     result = []
     q = quotient(T, patron)
+    print(q)
     for p in q:
         indices = limpia(p)
         result.append(set())

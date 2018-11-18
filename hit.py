@@ -104,10 +104,9 @@ class TupleModelHash():
         for Ha in self.H:  # Ha historia actual
             if not Ha:
                 continue
-            H.append(sorted(Ha, key=lambda x: perm[min(set(self.T[x]).intersection(set(range(b_1,n))))]))
             for ar in sorted(self.ops):
                 for op in sorted(self.ops[ar], key=lambda f: f.sym):
-                    b_1 = len(perm)  # final del bloque anterior
+                    b_1 = n  # final del bloque anterior
                     n += len(sigma)**op.arity
                     for i in range(b_1, n):
                         s_i = self._int2base(i-b_1, len(sigma),op.arity)
@@ -115,6 +114,8 @@ class TupleModelHash():
                         print(sigma)
                         s_i = self._base2int(s_i, len(sigma)) + b_1
                         perm.append(s_i)
+            #H.append(sorted(Ha, key=lambda x: perm[min(set(self.T[x]).intersection(set(range(b_1,n))))]))
+            H.append(sorted(Ha, key=lambda x: perm[min(self.T[x])]))
             sigma += [Ha.index(e)+len(sigma) for e in H[-1]]
         T = dict()
         for e in self.T:
@@ -172,7 +173,8 @@ if __name__ == "__main__":
     """
 
     from parser import parser
-    MODEL = parser("./model_examples/romboletras.model")
+    MODEL = parser("./model_examples/romboletras.model",preprocess=False)
+    print(MODEL)
     TA = ["c", "d"]
     TB = ["d", "c"]
     FA = TupleModelHash(MODEL, TA)
