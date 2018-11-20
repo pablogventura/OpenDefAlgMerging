@@ -172,7 +172,7 @@ if __name__ == "__main__":
 
     from parser import parser
     MODEL = parser("./model_examples/cadena100.model",preprocess=True)
-    print(MODEL)
+    #print(MODEL)
     TA = [2, 3]
     TB = [3, 2]
     FA = TupleModelHash(MODEL, TA)

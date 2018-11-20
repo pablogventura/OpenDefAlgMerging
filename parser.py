@@ -88,7 +88,7 @@ def parser(path=None, preprocess=True):
                         # empieza una operacion
                         current_op = parse_defop(line)
                         op_missing_tuples = len(universe)**current_op.arity
-                        print("universo %s" % universe)
+                        print("universe %s" % universe)
                         print("%s tuples: %s" %
                               (current_op.sym, op_missing_tuples))
                     elif line.count(" ") == 2:
@@ -131,6 +131,7 @@ def parser(path=None, preprocess=True):
                 rel = relations[sym]
                 prep_relations = prep_relations.union(preprocessing.preprocesamiento(rel.r))
         relations = {sym:relations[sym] for sym in relations if not sym.startswith("T")}
+        print ("Preprocessing turned T into %s Ts" % len(prep_relations))
         for i,rel in enumerate(prep_relations):
             relations["T%s" % i]=Relation("T%s" % i, len(next(iter(rel))), rel)
 

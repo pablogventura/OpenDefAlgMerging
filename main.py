@@ -99,12 +99,11 @@ class Partition():
                 self.unir(t, tp)
 
     def unir(self, t1, t2):
-        #print (len(self))
         if t1 == t2:
             return
         o1 = self.getOrbit(t1)
         o2 = self.getOrbit(t2)
-        print("unir %s con %s" % (o1, o2))
+
         if o1 == o2:
             return
         self.delOrbit(t1)
@@ -113,7 +112,6 @@ class Partition():
         if union.t:
             self.types[union.t] = union.o
         self.partition[t1] = union
-        print(union)
 
     def __getitem__(self, key):
         for h in self.types:
@@ -162,7 +160,6 @@ def isOpenDef(A, Tgs):
             O = Os[len(t)]
             #print(t)
             if not O.hasKnowType(t):
-                print("toca %s" % str(t))
                 
                 h = TupleModelHash(E, t)
                 u = h.universe()
