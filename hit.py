@@ -102,7 +102,6 @@ class TupleModelHash():
         sigma = list(perm)
         perm = list(perm)
         H = [list(self.tuple())]
-        print (self.H)
         for Ha in self.H[1:]+[[]]:  # Saltea el primer bloque de la historia porque es la misma tulpa
                                     # y agrega al final la lista vacia porque no se crearon mas elementos
 
@@ -116,9 +115,6 @@ class TupleModelHash():
                 perm.append(s_i)
             H.append(sorted(Ha, key=lambda x: perm[min(self.T[x])]))
             sigma += [H[-1].index(e)+len(sigma) for e in H[-1]]
-            print (H)
-            print(perm)
-            print(self.H)
         T = dict()
         for e in self.T:
             T[e] = frozenset(perm[i] for i in self.T[e])
