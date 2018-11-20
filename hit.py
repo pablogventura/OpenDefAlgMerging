@@ -171,7 +171,7 @@ if __name__ == "__main__":
     """
 
     from parser import parser
-    MODEL = parser("./model_examples/retrombo2.model",preprocess=True)
+    MODEL = parser("./model_examples/cadena100.model",preprocess=True)
     print(MODEL)
     TA = [2, 3]
     TB = [3, 2]
@@ -181,4 +181,4 @@ if __name__ == "__main__":
     print(FA)
     print(FB)
     print(FC)
-    print(FA == FB and FA == FC and FB == FC)
+    print(FB == FC)
