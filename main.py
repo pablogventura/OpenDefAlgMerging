@@ -148,32 +148,21 @@ def isOpenDef(A, Tgs):
     Os = {e:Partition(A.universe, e, Tgs) for e in spectrum}  # Inicialización de las orbitas
     # Inicializacion del stack
     S = [(A, chain(*[permutations(A.universe, r=e) for e in spectrum]),{e:MicroPartition() for e in spectrum})]
-    #assert False
     while S:
-        #print ("*")
         (E, l, rs) = S.pop()
-        #print(O)
-        #print("pop")
         for t in l:
-            #print(t)
             r= rs[len(t)]
             O = Os[len(t)]
-            #print(t)
             if not O.hasKnowType(t):
-                
                 h = TupleModelHash(E, t)
                 u = h.universe()
                 if len(u) == len(E):  # nos quedamos en el mismo tamaño
                     # es un tipo conocido (un automorfismo para checkear)
                     if h in r:
-
                         gamma = h.iso(r.representative(h))
-
                         propagarGrosa(Os,gamma)
                     else:  # es un tipo no conocido de potencial automorfismo
                         O.setType(t, h)  # Etiqueto la orbita de t
-                        #if sorted(t) == [2,3]:
-                        #    import ipdb;ipdb.set_trace()
                         r.newType(t, h)
                 else:  # Genera algo mas chico
                     # es de un tipo conocido (un subiso para checkear)
@@ -187,9 +176,6 @@ def isOpenDef(A, Tgs):
                             if e not in mps:
                                 mps[e]=MicroPartition()
                         S.append((A, chain(*[permutations(h.universe(), r=e) for e in spectrum]),mps))
-                        #print("append")
-                        #if sorted(t) == [2,3]:
-                        #    import ipdb;ipdb.set_trace()
                         O.setType(t, h)  # Etiqueto la orbita de t
                         break
     print(Os)
