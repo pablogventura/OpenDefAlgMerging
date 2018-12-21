@@ -182,6 +182,46 @@ def isOpenDef(A, Tgs):
     print(tuple(len(Os[O]) for O in Os))
     return True
 
+def isOpenDefTodos(A, Tgs):
+    Tgs = sorted([A.relations[Tg] for Tg in Tgs])
+    spectrum = list(sorted({Tg.arity for Tg in Tgs},reverse=True))
+    Os = {e:Partition(A.universe, e, Tgs) for e in spectrum}  # Inicialización de las orbitas
+    # Inicializacion del stack
+    S = [(A, chain(*[combinations(A.universe, r=e) for e in spectrum]),{e:MicroPartition() for e in spectrum},MicroPartition())]
+    while S:
+        (E, l, rs) = S.pop()
+        for t in l: # TODO hay que recordar la permutacion por la que se va
+            r= rs[len(t)]
+            O = Os[len(t)]
+            if not O.hasKnowType(t):
+                h = TupleModelHash(E, t)
+                u = h.universe()
+                if len(u) == len(E):  # nos quedamos en el mismo tamaño
+                    # es un tipo conocido (un automorfismo para checkear)
+                    if h in r:
+                        gamma = h.iso(r.representative(h))
+                        propagarGrosa(Os,gamma)
+                    else:  # es un tipo no conocido de potencial automorfismo
+                        O.setType(t, h)  # Etiqueto la orbita de t
+                        r.newType(t, h)
+                else:  # Genera algo mas chico
+                    # es de un tipo conocido (un subiso para checkear)
+                    if h in O:
+                        gamma = O[h].iso(h)
+                        propagarGrosa(Os,gamma)
+                    else:
+                        S.append((E, l, rs))
+                        mps= {len(t):MicroPartition({h: t})}
+                        for e in spectrum:
+                            if e not in mps:
+                                mps[e]=MicroPartition()
+                        S.append((A, chain(*[combinations(h.universe(), r=e) for e in spectrum]),mps,MicroPartition()))
+                        O.setType(t, h)  # Etiqueto la orbita de t
+                        break
+    print(Os)
+    print(tuple(len(Os[O]) for O in Os))
+    return True
+
 
 if __name__ == "__main__":
     main()
