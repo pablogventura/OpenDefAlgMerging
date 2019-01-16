@@ -132,7 +132,8 @@ class MicroPartition():
         self.dictOfKeys = {k: k for k in d.keys()}
     def union(self, other):
         #TODO union de microparticiones
-        pass
+        self.dict = dict(self.dict, **other.dict)
+        self.dict = dict(self.dictOfKeys, **dictOfKeys.dict)
     def __contains__(self, h):
         return h in self.dict
 
