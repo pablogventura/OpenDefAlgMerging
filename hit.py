@@ -115,9 +115,15 @@ class TupleModelHash():
                         s_i = [sigma[x] for x in s_i]
                         s_i = self._base2int(s_i, len(sigma)) + b_i
                         perm.append(s_i)
-                    H.append(sorted(Ha, key=lambda x: perm[min(self.T[x])]))
-                    
-                    sigma += [Ha.index(e)+len(sigma) for e in H[-1]]
+            def f11(x):
+                #print(self.T)
+                print(perm)
+                print(x)
+                
+                return min([perm[i] for i in self.T[x] if i < len(perm)])
+            H.append(sorted(Ha, key=f11))
+            
+            sigma += [Ha.index(e)+len(sigma) for e in H[-1]]
         T = dict()
         for e in self.T:
             T[e] = frozenset(perm[i] for i in self.T[e])
@@ -180,7 +186,7 @@ if __name__ == "__main__":
     """
 
     from parser import parser
-    MODEL = parser("./testhitvshitp/ejemplohitpdamal.model",preprocess=True)
+    MODEL = parser("./testhitvshitp/ejemplohitperror.model",preprocess=True)
     #print(MODEL)
     TA = [2, 3]
     TB = [3, 2]
