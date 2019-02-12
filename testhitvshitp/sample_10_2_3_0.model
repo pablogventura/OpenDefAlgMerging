@@ -1,0 +1,22 @@
+# Generated 2019-02-12 10:08:43
+# Parameters: |A| = 10, |MaxSubs| = 2, |ms| = 3 with ms in MaxSubs, Arities = [1, 2, 3]
+# Random Seed: 0
+
+0 1 2 3 4 5 6 7 8 9
+
+f0 1
+0 9
+1 4
+2 7
+3 5
+4 7
+5 3
+6 6
+7 8
+8 4
+9 0
+
+
+T0 1 2
+0 0
+
