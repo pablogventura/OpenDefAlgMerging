@@ -9,6 +9,7 @@ from parser import parser
 from hit import TupleModelHash
 
 seed = 0
+random.seed(seed)
 def generador(tA, t, c, fs):
     # tA es el tamaño de la estructura ambiente
     # t es la cantidad de subconjuntos
@@ -18,7 +19,6 @@ def generador(tA, t, c, fs):
     result += '# Parameters: |A| = %s, |MaxSubs| = %s, |ms| = %s with ms in MaxSubs, Arities = %s\n' % (tA,t,c,fs)
 
     result += "# Random Seed: %s\n" % seed
-    random.seed(seed)
     universe = set(range(tA))
     result += " ".join(str(e) for e in universe) + "\n"
     # TODO no hay que agregar al universo ambiente como subuniverso maximal?
