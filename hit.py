@@ -51,7 +51,7 @@ class TupleModelHash():
                 for f in sorted(self.ops[ar], key=lambda f: f.sym):
                     for tup in product(flath, repeat=ar):
                         i += 1
-                        self.V.append(str(f(*tup)))
+                        self.V.append(str(f(*tup))) #marco con un str a los que no son "necesarios"
                         if any(t in O for t in tup):
                             x = f(*tup)
                             self.T[x].add(i)
@@ -113,6 +113,7 @@ class TupleModelHash():
                         s_i = [sigma[x] for x in s_i]
                         s_i = self._base2int(s_i, len(sigma)) + b_i
                         perm.append(s_i)
+
                     H.append(sorted(Ha, key=lambda x: perm[min(self.T[x])]))
                     sigma += [H[-1].index(e)+len(sigma) for e in H[-1]]
         T = dict()
@@ -177,7 +178,7 @@ if __name__ == "__main__":
     """
 
     from parser import parser
-    MODEL = parser("./model_examples/cadena100.model",preprocess=True)
+    MODEL = parser("./testhitvshitp/sample_10_2_3_0.model",preprocess=True)
     #print(MODEL)
     TA = [2, 3]
     TB = [3, 2]
