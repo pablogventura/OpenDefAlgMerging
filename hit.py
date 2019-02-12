@@ -101,21 +101,23 @@ class TupleModelHash():
         b_n=len(perm)
         sigma = list(perm)
         perm = list(perm)
-        H = [list(self.tuple())]
+        H = [list(self.tuple()[i] for i in perm)]
         for Ha in self.H[1:]+[[]]:  # Saltea el primer bloque de la historia porque es la misma tulpa
                                     # y agrega al final la lista vacia porque no se crearon mas elementos
             for ar in sorted(self.ops):
                 for op in sorted(self.ops[ar], key=lambda f: f.sym):
                     b_i = b_n  # final del bloque anterior
                     b_n += len(sigma)**op.arity
+                    #print("Sigma %s" % sigma)
+                    #print("Pi %s" % perm) # pi
                     for i in range(b_i, b_n):
                         s_i = self._int2base(i-b_i, len(sigma),op.arity)
                         s_i = [sigma[x] for x in s_i]
                         s_i = self._base2int(s_i, len(sigma)) + b_i
                         perm.append(s_i)
-
                     H.append(sorted(Ha, key=lambda x: perm[min(self.T[x])]))
-                    sigma += [H[-1].index(e)+len(sigma) for e in H[-1]]
+                    
+                    sigma += [Ha.index(e)+len(sigma) for e in H[-1]]
         T = dict()
         for e in self.T:
             T[e] = frozenset(perm[i] for i in self.T[e])
