@@ -119,7 +119,7 @@ class TupleModelHash():
         T = dict()
         for e in self.T:
             T[e] = frozenset(perm[i] for i in self.T[e])
-            d = defaultdict(lambda :" ", {perm[i]:e for i,e in enumerate(self.V)})
+            d = defaultdict(lambda :" ", {perm[i]:e for i,e in enumerate(self.V)}) # para armar V
         V=[]
         for i in range(max(d.keys())+1):
             V.append(d[i])
@@ -178,7 +178,7 @@ if __name__ == "__main__":
     """
 
     from parser import parser
-    MODEL = parser("./testhitvshitp/sample_10_2_3_0.model",preprocess=True)
+    MODEL = parser("./testhitvshitp/ejemplohitpdamal.model",preprocess=True)
     #print(MODEL)
     TA = [2, 3]
     TB = [3, 2]
