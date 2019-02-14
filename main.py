@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #!/usr/bin/env python
-from itertools import permutations, chain
+from itertools import permutations, chain, combinations
 
 from parser import parser
 from counterexample import CounterexampleTuples
@@ -144,13 +144,22 @@ class MicroPartition():
         self.dict[h] = t
         self.dictOfKeys[h] = h
 
+def permutations_star(iterable, r=None):
+    """
+    Permutaciones con el orden estrella
+    """
+    if not r:
+        r=len(iterable)
+    for s in combinations(iterable, r=r):
+        for t in permutations(s):
+            yield t
 
 def isOpenDef(A, Tgs):
     Tgs = sorted([A.relations[Tg] for Tg in Tgs])
     spectrum = list(sorted({Tg.arity for Tg in Tgs},reverse=True))
     Os = {e:Partition(A.universe, e, Tgs) for e in spectrum}  # Inicialización de las orbitas
     # Inicializacion del stack
-    S = [(A, chain(*[permutations(A.universe, r=e) for e in spectrum]),{e:MicroPartition() for e in spectrum})]
+    S = [(A, chain(*[permutations_star(A.universe, r=e) for e in spectrum]),{e:MicroPartition() for e in spectrum})]
     while S:
         (E, l, rs) = S.pop()
         for t in l:
@@ -178,7 +187,7 @@ def isOpenDef(A, Tgs):
                         for e in spectrum:
                             if e not in mps:
                                 mps[e]=MicroPartition()
-                        S.append((A, chain(*[permutations(h.universe(), r=e) for e in spectrum]),mps))
+                        S.append((A, chain(*[permutations_star(h.universe(), r=e) for e in spectrum]),mps))
                         O.setType(t, h)  # Etiqueto la orbita de t
                         break
     print(Os)
