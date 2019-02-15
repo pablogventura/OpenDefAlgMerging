@@ -5,6 +5,7 @@ from itertools import product, permutations
 from os import mkdir
 import time
 
+from main import isOpenDef
 from parser import parser
 from hit import TupleModelHash
 
@@ -38,6 +39,11 @@ def generador(tA, t, c, fs):
                 intersection = intersection & sets.pop()
             fvalues = choice(list(intersection))
             result += " ".join(str(e) for e in values) + " %s\n" % fvalues
+    tarity = 3
+    result += "T0 %s %s\n" % (tarity, tA**tarity)
+    for i in product(universe, repeat=tarity):
+        result += " ".join(map(str,i))
+        result += "\n"
     return result
     
 
@@ -61,30 +67,11 @@ for i in range(10):
                 filename = "%s/sample_%s_%s_%s_%s.model" % (path,tA,t,c,i)
                 with open(filename,"w") as f:
                     f.write(generador(tA, t, c, fs))
-                model = parser(filename)
-                for j in range(10): #cantidad de tuplas para probar
-                    a = randint(1,5) #aridad aleatoria entre 1 y 5
-                    generator_tuple = tuple(sample(range(tA),a))
-                    # TESTEO HIT SECUENCIAL
-                    hit_start_time = time.time()
-                    hit = set()
-                    for p in permutations(range(a)):
-                        hit.add(TupleModelHash(model, permutador(generator_tuple,p)))
-                    hit_elapsed_time = time.time() - hit_start_time
-                    # TESTEO HITp
-                    hitp_start_time = time.time()
-                    hit = set()
-                    principal = TupleModelHash(model, generator_tuple)
-                    hit.add(principal)
-                    iterador = permutations(range(a))
-                    next(iterador)
-                    for p in iterador:
-                        print(principal)
-                        print(p)
-                        hit.add(principal.hit_p(p))
-                        print("holis")
-                    hitp_elapsed_time = time.time() - hitp_start_time
-                    print("Tuple %s in %s\tHit  time:%s\tHitp time:%s"%(generator_tuple, filename, hit_elapsed_time, hitp_elapsed_time))
+                model = parser(filename,False)
+                targets_rels = tuple(sym for sym in model.relations.keys() if sym[0] == "T")
+                if not targets_rels:
+                    print("ERROR: NO TARGET RELATIONS FOUND")
+                assert(isOpenDef(model, targets_rels))
 
 
 
