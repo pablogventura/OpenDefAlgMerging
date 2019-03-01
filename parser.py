@@ -94,8 +94,10 @@ def parser(path=None, preprocess=True):
                     elif line.count(" ") == 2:
                         # empieza una relacion
                         current_rel, rel_missing_tuples = parse_defrel(line)
-                        print("%s density: %f" % (current_rel.sym, float(
-                            rel_missing_tuples)/(len(universe)**current_rel.arity)))
+                        try:
+                            print("%s density: %f" % (current_rel.sym, float(rel_missing_tuples)/(len(universe)**current_rel.arity)))
+                        except:
+                            print("WARNING: no pudo calcular la densidad")
                 else:
                     if current_rel is not None:
                         # continua una relacion
