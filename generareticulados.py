@@ -1,119 +1,53 @@
-import random
+from itertools import product,combinations
+from random import sample
+def join(a,b):
+    # supremo
+    return a | b
 
-N = 5 # cantidad de elementos
-J=[[None]*N]*N
-M=[None]*N
-Q=[None]*N
-for i in range(N):
-    for j in range(N):
-        if i != j:
-            J[i][i] = i
-            J[i][j] = -1
-
-def S(i):
-    # the least positive integer j such that j**2 >= i and j >= 2.
-    j=2
-    while True:
-        if j**2>=i:
-            return j
-        j+=1
-
-def rnd(i):
-    return random.randint(0,i-1)
-
-def FindMax (i):
-    global N
-    global J
-    global M
-    global Q
-    k = 0;
-    j, s, a = 0,0,0
-    for j in range(i):
-        s = 1
-        for a in range(i):
-            if (a  != j and J[a][j] == a):
-                s = 0
-            if (s):
-                M[k] = j
-                k+=1
-    a = rnd (k)
-    a+=1
-    for j in range(k):
-        Q[j] = 0;
-    for s in range(a):
-        j = rnd (k);
-        if (Q[j]):
-            s-=1
-        else:
-            Q[j] = 1;
-    return k;
+def meet(a,b):
+    # infimo
+    return a & b
 
 
-def Work (i):
-    global N
-    global J
-    global M
-    global Q
-    j, l, w, s, q, u = 0,0,0,0,0,0
-    if (i == N - 1):
+def closure(generators):
+    print("# Generated from: " + " ".join(map(str,generators)))
+    news = set(generators)
+    universe = set()
+    rel_meet = set()
+    rel_join = set()
     
-        for j in range(N):
-            for l in range(N):
-                if (J[j][l] == -1):
-                    J[j][l] = N - 1;
-        return;
-    
-    q = S(N - i)
-    if (i == 1):
-    
-        u = 1;
-        M[0] = 0;
-        Q[0] = 1;
-
-    elif ( not rnd (q)):
-        u = FindMax (i);
-    for j in range(u):
-        if (Q[j]):
-        
-            J[M[j]][i] = i;
-            J[i][M[j]] = i;
-        
-    w = 1;
-    while (w):
-    
-        w = 0;
-        for j in range(i):
-            if (J[j][i] == i):
-                for s in range(i):
-                    if (J[s][j] == j and J[s][i]  != i):
-                    
-                        w = 1;
-                        J[s][i] = i;
-                        J[i][s] = i;
-                    
-        for j in range(i):
-            if (J[j][i] == i):
-                for l in range(i):
-                    if (J[l][i] == i):
-                        
-                        s = J[j][l];
-                        if (s  != -1 and J[s][i]  != i):
-                        
-                            w = 1;
-                            J[s][i] = i;
-                            J[i][s] = i;
-
-    for j in range(i):
-        if (J[j][i] == i):
-            for l in range(i):
-                if (J[l][i] == i and J[j][l] == -1):
-                    
-                    J[j][l] = i;
-                    J[l][j] = i;
+    while news:
+        local_news = set()
+        for t in combinations(news,2):
+            local_news.add(join(*t))
+            local_news.add(meet(*t))
+            rel_join.add(t+(join(*t),))
+            rel_meet.add(t+(meet(*t),))
+        for t in product(news,universe):
+            local_news.add(join(*t))
+            local_news.add(meet(*t))
+            rel_join.add(t+(join(*t),))
+            rel_meet.add(t+(meet(*t),))
+        local_news -= universe
+        local_news -= news
+        universe |= news
+        news = local_news
+    print(" ".join(map(str,universe)))
+    print("")
+    print("m 2 %s" % len(universe)**2)
+    for a,b,r in rel_meet:
+        print("%s %s %s" % (a,b,r))
+        print("%s %s %s" % (b,a,r))
+    print("")
+    print("j 2 %s" % len(universe)**2)
+    for a,b,r in rel_join:
+        print("%s %s %s" % (a,b,r))
+        print("%s %s %s" % (b,a,r))
 
 def main():
-    Work(2)
-    for j in J:
-        print(j)
+    generators = sample(range(1000),10)
+    closure(generators)
+
+    
 if __name__ == "__main__":
     main()
