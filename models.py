@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
-from itertools import combinations
+from itertools import combinations, product
 from functools import lru_cache
 from misc import indent
 
@@ -46,6 +46,24 @@ class Model(object):
         for o in self.operations:
             operations[o] = self.operations[o].restrict(subuniverse)
         return Model(subuniverse, relations, operations)
+    
+    def substructure(self, generators):
+        news = set(generators)
+        universe = set()
+        
+        while news:
+            local_news = set()
+            for operation in self.operations:
+                arity = self.operations[operation].arity
+                for t in product(universe,repeat=arity):
+                    if any(e in news for e in t): # tiene alguno nuevo
+                        local_news.add(self.operations[operation](*t))
+
+            local_news -= universe
+            local_news -= news
+            universe |= news
+            news = local_news
+        return self.restrict(universe)
 
     @lru_cache(maxsize=None)
     def rels_sizes(self, subtype):
@@ -67,3 +85,7 @@ class Model(object):
     def spectrum(self, subtype):
         result = set()
         return result.union(*[self.relations[r].spectrum() for r in subtype])
+    
+    def to_relational_model(self):
+        RelationalModel
+        

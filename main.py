@@ -11,6 +11,9 @@ import sys
 
 def main():
     model = parser(sys.argv[1])
+    print(model)
+    print(model.substructure([0,1]))
+    assert False
     targets_rels = tuple(sym for sym in model.relations.keys() if sym[0] == "T")
     if not targets_rels:
         print("ERROR: NO TARGET RELATIONS FOUND")
