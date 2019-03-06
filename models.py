@@ -85,7 +85,4 @@ class Model(object):
     def spectrum(self, subtype):
         result = set()
         return result.union(*[self.relations[r].spectrum() for r in subtype])
-    
-    def to_relational_model(self):
-        RelationalModel
         
