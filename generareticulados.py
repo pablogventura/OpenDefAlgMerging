@@ -46,7 +46,7 @@ def closure(generators):
 
 def main():
     generators = sample(range(1000),10)
-    closure(generators)
+    closure([0,1,2,3])
 
     
 if __name__ == "__main__":

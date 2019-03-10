@@ -85,4 +85,10 @@ class Model(object):
     def spectrum(self, subtype):
         result = set()
         return result.union(*[self.relations[r].spectrum() for r in subtype])
-        
+    
+    def to_relational_model(self):
+        relations=dict(self.relations)
+        for op in self.operations:
+            #rel = self.operations[op].to_relational_model()
+            relations[rel.sym]=rel
+        return Model(self.universe, relations, dict())

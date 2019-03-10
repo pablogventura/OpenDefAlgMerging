@@ -92,3 +92,7 @@ class Operation(object):
             if set(t) <= subuniverse:
                 result.add(t + (self.op[t],))
         return result
+
+    def graph_rel(self):
+        rel={t+(self.op[t],) for t in self.op}
+        return Relation("g" + self.sym, self.arity + 1, rel)
