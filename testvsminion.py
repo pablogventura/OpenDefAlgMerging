@@ -8,7 +8,7 @@ from time import time
 def main():
     model = parser(sys.argv[1])
     
-    ta = sample(model.universe,3)
+    ta = [0,1,2]
     tb = sample(model.universe,3)
     
     start_hit = time()
@@ -18,14 +18,11 @@ def main():
     
     start_minion = time()
     a=model.substructure(ta)
-    print(model)
     print(a)
-    print("hola")
-    sys.exit(0)
-    b=model.substructure(tb)
-    print (b)
+    #b=model.substructure(tb)
+    #print (b)
     ra=a.to_relational_model()
-    rb=b.to_relational_model()
+    #rb=b.to_relational_model()
     print(ra)
     time_minion = time() - start_minion
     

@@ -55,7 +55,7 @@ class Model(object):
             local_news = set()
             for operation in self.operations:
                 arity = self.operations[operation].arity
-                for t in product(universe,repeat=arity):
+                for t in product(universe|news,repeat=arity):
                     if any(e in news for e in t): # tiene alguno nuevo
                         local_news.add(self.operations[operation](*t))
 
@@ -89,6 +89,6 @@ class Model(object):
     def to_relational_model(self):
         relations=dict(self.relations)
         for op in self.operations:
-            #rel = self.operations[op].to_relational_model()
+            rel = self.operations[op].graph_rel()
             relations[rel.sym]=rel
         return Model(self.universe, relations, dict())
