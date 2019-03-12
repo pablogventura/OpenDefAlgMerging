@@ -2,7 +2,6 @@
 #!/usr/bin/env python
 
 from itertools import combinations, product
-from functools import lru_cache
 from misc import indent
 
 class PartialOrderedDict(dict):
@@ -31,7 +30,7 @@ class Model(object):
         Model
         Input: a universe list, relations dict, operations dict
         """
-        self.universe = set(universe)
+        self.universe = sorted(universe)
         self.relations = relations
         self.operations = operations
 
@@ -41,7 +40,11 @@ class Model(object):
         """
         relations = {}
         for r in self.relations:
+            print("era")
+            print(self.relations[r])
             relations[r] = self.relations[r].restrict(subuniverse)
+            print("quedo")
+            print(relations[r])
         operations = {}
         for o in self.operations:
             operations[o] = self.operations[o].restrict(subuniverse)
@@ -65,8 +68,9 @@ class Model(object):
             news = local_news
         return self.restrict(universe)
 
-    @lru_cache(maxsize=None)
+    
     def rels_sizes(self, subtype):
+        
         return PartialOrderedDict({r: len(self.relations[r]) for r in subtype})
 
     def __repr__(self):
@@ -93,14 +97,11 @@ class Model(object):
             relations[rel.sym]=rel
         return Model(self.universe, relations, dict())
 
-    @lru_cache(maxsize=None)
-    def rels_sizes(self,subtype):
-        return PartialOrderedDict({r:len(self.relations[r]) for r in subtype})
     
     def rel_minion_name(self,r):
         return r.replace("|","b").replace("-","e")
     
-    @lru_cache(maxsize=None)    
+  
     def minion_tables(self,subtype):
         result = ""
         for r in subtype:
