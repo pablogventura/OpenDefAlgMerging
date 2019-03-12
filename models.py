@@ -92,3 +92,31 @@ class Model(object):
             rel = self.operations[op].graph_rel()
             relations[rel.sym]=rel
         return Model(self.universe, relations, dict())
+
+    @lru_cache(maxsize=None)
+    def rels_sizes(self,subtype):
+        return PartialOrderedDict({r:len(self.relations[r]) for r in subtype})
+    
+    def rel_minion_name(self,r):
+        return r.replace("|","b").replace("-","e")
+    
+    @lru_cache(maxsize=None)    
+    def minion_tables(self,subtype):
+        result = ""
+        for r in subtype:
+            result += "%s %s %s\n" % (self.rel_minion_name(r), len(self.relations[r]), self.relations[r].arity)
+            for t in self.relations[r]:
+                result += " ".join(str(self.universe.index(x)) for x in t) + "\n"
+            result += "\n"
+        return result[:-1]
+        
+    def minion_constraints(self,subtype):
+        result = ""
+        #table([f[0],f[0],f[0]],bv)
+        result = ""
+        for r in subtype:
+            for t in self.relations[r]:
+                result += "table([f["
+                result += "],f[".join(str(self.universe.index(x)) for x in t)
+                result += "]],%s)\n" % self.rel_minion_name(r)
+        return result   
