@@ -49,7 +49,7 @@ def closure(generators):
         print("%s %s %s" % (a,b,r))
 
 def main():
-    generators = sample(range(20),5)
+    generators = sample(range(1000),100)
     closure(generators)
 
     
