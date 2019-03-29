@@ -10,7 +10,10 @@ from misc import indent
 import sys
 
 def main():
-    model = parser(sys.argv[1])
+    try:
+        model = parser(sys.argv[1])
+    except IndexError:
+        model = parser()
     print(model)
     print(model.substructure([0,1]))
     assert False
