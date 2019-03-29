@@ -48,7 +48,7 @@ def generador(tA, t, c, fs, fc, tarity):
                     intersection = intersection & sets.pop()
                 fvalues = choice(list(intersection))
                 result += " ".join(str(e) for e in values) + " %s\n" % fvalues
-    result += "T0 %s %s\n" % (tarity, tA**tarity)
+    result += "T0 %s %s\n" % (tA**tarity, tarity)
     for i in product(universe, repeat=tarity):
         result += " ".join(map(str, i))
         result += "\n"
