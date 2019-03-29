@@ -45,7 +45,6 @@ class TupleModelHash():
         O = self.H[-1]
 
         while O:
-            # esto estaba abajo de ar, entonces recalculaba el alfabeto cada vez
             flath = [item for sublist in self.H for item in sublist]
             self.H.append([])
             for ar in sorted(self.ops):
