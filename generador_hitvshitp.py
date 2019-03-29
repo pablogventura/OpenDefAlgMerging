@@ -1,7 +1,7 @@
 import datetime
 import sys
 from random import sample, choice
-from itertools import product, combinations, permutations
+from itertools import product, permutations
 
 
 def generador(tA, t, c, fs, fc, tarity):
