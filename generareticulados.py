@@ -1,3 +1,4 @@
+from itertools import product
 from random import sample
 import sys
 
