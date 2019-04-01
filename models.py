@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 
-from itertools import combinations, product
+from itertools import product
 from misc import indent
+
 
 class PartialOrderedDict(dict):
     def __lt__(self, other):  # <
@@ -49,17 +50,17 @@ class Model(object):
         for o in self.operations:
             operations[o] = self.operations[o].restrict(subuniverse)
         return Model(subuniverse, relations, operations)
-    
+
     def substructure(self, generators):
         news = set(generators)
         universe = set()
-        
+
         while news:
             local_news = set()
             for operation in self.operations:
                 arity = self.operations[operation].arity
-                for t in product(universe|news,repeat=arity):
-                    if any(e in news for e in t): # tiene alguno nuevo
+                for t in product(universe | news, repeat=arity):
+                    if any(e in news for e in t):  # tiene alguno nuevo
                         local_news.add(self.operations[operation](*t))
 
             local_news -= universe
@@ -68,9 +69,8 @@ class Model(object):
             news = local_news
         return self.restrict(universe)
 
-    
     def rels_sizes(self, subtype):
-        
+
         return PartialOrderedDict({r: len(self.relations[r]) for r in subtype})
 
     def __repr__(self):
@@ -79,7 +79,7 @@ class Model(object):
             result += indent(self.relations[sym]) + "\n"
         result += "operations=\n"
         for sym in sorted(self.operations):
-            result += indent(self.operations[sym])  + "\n"
+            result += indent(self.operations[sym]) + "\n"
         result += ")"
         return result
 
@@ -89,35 +89,34 @@ class Model(object):
     def spectrum(self, subtype):
         result = set()
         return result.union(*[self.relations[r].spectrum() for r in subtype])
-    
+
     def to_relational_model(self):
-        relations=dict(self.relations)
+        relations = dict(self.relations)
         for op in self.operations:
             rel = self.operations[op].graph_rel()
-            relations[rel.sym]=rel
+            relations[rel.sym] = rel
         return Model(self.universe, relations, dict())
 
-    
-    def rel_minion_name(self,r):
-        return r.replace("|","b").replace("-","e")
-    
-  
-    def minion_tables(self,subtype):
+    def rel_minion_name(self, r):
+        return r.replace("|", "b").replace("-", "e")
+
+    def minion_tables(self, subtype):
         result = ""
         for r in subtype:
-            result += "%s %s %s\n" % (self.rel_minion_name(r), len(self.relations[r]), self.relations[r].arity)
+            result += "%s %s %s\n" % (self.rel_minion_name(r),
+                                      len(self.relations[r]), self.relations[r].arity)
             for t in self.relations[r]:
                 result += " ".join(str(self.universe.index(x)) for x in t) + "\n"
             result += "\n"
         return result[:-1]
-        
-    def minion_constraints(self,subtype):
+
+    def minion_constraints(self, subtype):
         result = ""
-        #table([f[0],f[0],f[0]],bv)
+        # table([f[0],f[0],f[0]],bv)
         result = ""
         for r in subtype:
             for t in self.relations[r]:
                 result += "table([f["
                 result += "],f[".join(str(self.universe.index(x)) for x in t)
                 result += "]],%s)\n" % self.rel_minion_name(r)
-        return result   
+        return result

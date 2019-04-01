@@ -3,6 +3,7 @@
 
 from functools import total_ordering
 
+
 @total_ordering
 class Relation(object):
     """
@@ -15,10 +16,12 @@ class Relation(object):
         self.r = rel
 
     def add(self, t):
+        if len(t) != self.arity:
+            raise ValueError('%s is not of arity %s' % (t, self.arity))
         self.r.add(t)
 
     def __repr__(self):
-        return "%s : %s" % (self.sym,self.r)
+        return "%s : %s" % (self.sym, self.r)
 
     def __call__(self, *args):
         return args in self.r
@@ -44,14 +47,13 @@ class Relation(object):
         return result
 
     def __eq__(self, other):
-        return (self.sym,self.r) == (other.sym,other.r)
+        return (self.sym, self.r) == (other.sym, other.r)
 
     def __ne__(self, other):
         return not (self == other)
 
     def __lt__(self, other):
-        return self.arity > other.arity or self.sym < self.sym # TODO no ordena bien los symbolos
-
+        return self.arity > other.arity or self.sym < self.sym  # TODO no ordena bien los symbolos
 
 
 class Operation(object):
@@ -65,10 +67,12 @@ class Operation(object):
         self.op = dict()
 
     def add(self, t):
+        if len(t)-1 != self.arity:
+            raise ValueError('%s is not of arity %s' % (t[:-1], self.arity))
         self.op[t[:-1]] = t[-1]
 
     def __repr__(self):
-        return "%s : %s" % (self.sym,self.op)
+        return "%s : %s" % (self.sym, self.op)
 
     def __call__(self, *args):
         return self.op[args]
@@ -94,5 +98,5 @@ class Operation(object):
         return result
 
     def graph_rel(self):
-        rel={t+(self.op[t],) for t in self.op}
+        rel = {t+(self.op[t],) for t in self.op}
         return Relation("g" + self.sym, self.arity + 1, rel)

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 """
 Modulo para calcular HIT de una tupla en un modelo
@@ -46,7 +45,6 @@ class TupleModelHash():
         O = self.H[-1]
 
         while O:
-            # esto estaba abajo de ar, entonces recalculaba el alfabeto cada vez
             flath = [item for sublist in self.H for item in sublist]
             self.H.append([])
             for ar in sorted(self.ops):
@@ -57,7 +55,7 @@ class TupleModelHash():
                             x = f(*tup)
                             self.T[x].add(i)
                             if self.debug:
-                                self.V[-1]= x
+                                self.V[-1] = x
                             if all(x not in h for h in self.H):
                                 self.H[-1].append(x)
             O = self.H[-1]
@@ -93,11 +91,12 @@ class TupleModelHash():
         result = "TupleModelHash(\n"
         result += indent("Tuple=%s,\n" % self.generator_tuple)
         result += indent("History=%s,\n" % self.H)
-        result += indent("Type=%s,\n" % {k:sorted(self.T[k]) for k in self.T})
+        result += indent("Type=%s,\n" % {k: sorted(self.T[k]) for k in self.T})
         if self.debug:
             result += indent("V=%s,\n" % self.V)
         result += ")"
         return result
+
 
 if __name__ == "__main__":
     """
@@ -105,12 +104,12 @@ if __name__ == "__main__":
     """
 
     from parser import parser
-    MODEL = parser("./model_examples/suma4.model",preprocess=True)
-    #print(MODEL)
+    MODEL = parser("./model_examples/suma4.model", preprocess=True)
+    # print(MODEL)
     TA = [1, 2]
     TB = [2, 3]
     FA = TupleModelHash(MODEL, TA)
     FB = TupleModelHash(MODEL, TB)
     print(FA)
     print(FB)
-    print(FA==FB)
+    print(FA == FB)
