@@ -203,8 +203,7 @@ def isOpenDef(A, Tgs):
                                              for e in spectrum]), mps))
                         O.setType(t, h)  # Etiqueto la orbita de t
                         break
-    print(Os)
-    print(tuple(len(Os[O]) for O in Os))
+
     return True
 
 
