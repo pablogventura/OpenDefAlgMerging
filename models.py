@@ -41,11 +41,7 @@ class Model(object):
         """
         relations = {}
         for r in self.relations:
-            print("era")
-            print(self.relations[r])
             relations[r] = self.relations[r].restrict(subuniverse)
-            print("quedo")
-            print(relations[r])
         operations = {}
         for o in self.operations:
             operations[o] = self.operations[o].restrict(subuniverse)

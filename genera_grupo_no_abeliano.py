@@ -58,6 +58,10 @@ def generador(perm, gens):
     for a in universe:
         r = inverse(a)
         clean_print("%s %s" % (a,r))
+    print("")
+    clean_print("T0 %s %s" % (len(universe)**2, 2))
+    for i in product(universe, universe):
+        clean_print(" ".join(map(str, i)))
 
 def main():
     try:
