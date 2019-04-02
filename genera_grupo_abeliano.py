@@ -29,7 +29,7 @@ def generador(numeros):
             r.append((-a[i]) % numeros[i])
         clean_print("%s %s" % (a, tuple(r)))
     clean_print("")
-    clean_print("Zero 1 1")
+    clean_print("Zero 0")
     clean_print("(" + ",".join("0"*len(numeros)) + ",)")
     clean_print("")
     clean_print("T0 %s %s" % (len(universe)**2, 2))
