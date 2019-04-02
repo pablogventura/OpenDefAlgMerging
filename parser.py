@@ -2,8 +2,8 @@
 #!/usr/bin/env python
 import sys
 
-from models import Model
-from relops import Relation, Operation
+from first_order.models import Model
+from first_order.relops import Relation, Operation
 import preprocessing
 
 # parsing operations and relations

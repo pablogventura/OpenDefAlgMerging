@@ -8,7 +8,7 @@ Modulo para calcular HIT de una tupla en un modelo
 from itertools import product
 from collections import defaultdict
 from misc import indent
-from isomorphisms import Isomorphism
+from first_order.isomorphisms import Isomorphism
 
 
 class TupleModelHash():
