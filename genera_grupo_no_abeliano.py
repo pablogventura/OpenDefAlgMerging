@@ -1,5 +1,4 @@
 from itertools import product
-from random import sample
 import sys
 
 
@@ -10,6 +9,13 @@ def clean_print(value):
         value = value.replace(", ", ",")
     print(value)
 
+
+def compose(a,b):
+    assert len(a)==len(b)
+    r = []
+    for i in range(len(a)):
+        r.append(b[a[i]])
+    return tuple(r)
 
 def generador(perm, gens):
     universe = list(product(*list(range(i) for i in numeros)))
