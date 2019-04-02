@@ -2,7 +2,7 @@
 # !/usr/bin/env python
 from itertools import permutations, chain, combinations
 
-from parser import parser
+from parser.parser import parser
 from counterexample import CounterexampleTuples
 from hit import TupleModelHash
 import sys

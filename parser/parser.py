@@ -4,17 +4,7 @@ import sys
 
 from first_order.models import Model
 from first_order.relops import Relation, Operation
-import preprocessing
-
-# parsing operations and relations
-# operations format:
-#   symbol arity
-#   (arity+1)-uples
-#   empty line
-# relations format:
-#   symbol number_of_tuples arity
-#   tuples
-#   empty line
+from parser import preprocessing
 
 
 class ParserError(Exception):
