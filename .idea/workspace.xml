@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7fdd488b-3619-463d-a4fa-f3a8b94b0319" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/OpenDefAlg.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/OpenDefAlg.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/genera_grupo_no_abeliano.py" beforeDir="false" afterPath="$PROJECT_DIR$/genera_grupo_no_abeliano.py" afterDir="false" />
-    </list>
+    <list default="true" id="7fdd488b-3619-463d-a4fa-f3a8b94b0319" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,7 +14,7 @@
         <entry file="file://$PROJECT_DIR$/genera_grupo_no_abeliano.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="352">
-              <caret line="16" column="20" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
+              <caret line="16" column="25" lean-forward="true" selection-start-line="16" selection-start-column="25" selection-end-line="16" selection-end-column="25" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -137,6 +133,14 @@
       <option name="presentableId" value="Default" />
       <updated>1554158458446</updated>
     </task>
+    <task id="LOCAL-00001" summary="composicion">
+      <created>1554221615697</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1554221615697</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -156,11 +160,15 @@
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32992035" />
       <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.4994726" weight="0.32992035" />
       <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50052744" side_tool="true" weight="0.32992035" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="10" visible="true" weight="0.32992035" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32992035" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="composicion" />
+    <option name="LAST_COMMIT_MESSAGE" value="composicion" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/prueba.py" />
@@ -174,7 +182,7 @@
     <entry file="file://$PROJECT_DIR$/genera_grupo_no_abeliano.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="352">
-          <caret line="16" column="20" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
+          <caret line="16" column="25" lean-forward="true" selection-start-line="16" selection-start-column="25" selection-end-line="16" selection-end-column="25" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
