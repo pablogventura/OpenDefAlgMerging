@@ -20,7 +20,7 @@ def generar(*args, cuantity=100):
         if argumentos:
             argumentos = '"' + argumentos + '"'
 
-        os.system("python " + script + " " + argumentos + " > " + filename)
+        os.system("python3 " + script + " " + argumentos + " > " + filename)
 
 generar("grupo_abeliano",2,3,4)
 generar("grupo_no_abeliano",3,2)
