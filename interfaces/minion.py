@@ -3,16 +3,12 @@
 
 # Minion interface based on Peter Jipsen 2011-03-26 alpha version
 import os
-import codecs
 import subprocess as sp
-from select import poll, POLLIN
 
-from isomorphisms import Automorphism, Isomorphism, Homomorphism
-import config
 import files
-from itertools import product
-from collections import defaultdict
-from misc import *
+from first_order.isomorphisms import Automorphism, Homomorphism, Isomorphism
+from interfaces import config
+
 
 def identity_table(size):
     result = "I 1 %s\n" % size

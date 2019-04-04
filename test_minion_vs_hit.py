@@ -1,14 +1,15 @@
-from parser import parser
+from parser.parser import parser
 from random import sample
 import sys
 from hit import TupleModelHash
 from time import time
-from minion import is_isomorphic
+from interfaces.minion import is_isomorphic
 from colorama import Fore, Style
 
 
 def main():
     model = parser(sys.argv[1])
+    model.relations = {} # este test es sin relaciones
     
     ta = sample(model.universe, 3)
     tb = sample(model.universe, 3)
