@@ -2,7 +2,7 @@
 import os
 
 
-def generar(*args, cuantity=10):
+def generar(*args, cuantity=100):
     # genera alg random
     args = [str(i) for i in args]
     for i in range(cuantity):
