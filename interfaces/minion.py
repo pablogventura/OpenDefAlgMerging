@@ -154,7 +154,7 @@ def automorphisms(model,subtype):
     return MinionSol(result,allsols=True,fun=lambda aut:(Automorphism({model.universe[k]:model.universe[aut[k]] for k in aut},model,subtype)))
 
 
-def isomorphisms(source,target,subtype,allsols=True):
+def isomorphisms(source,target,subtype,allsols=True,a=None,b=None):
     if len(source)!=len(target):
         return [] # generador vacio
     
@@ -162,6 +162,8 @@ def isomorphisms(source,target,subtype,allsols=True):
         return [] # generador vacio
     
     result = "MINION 3\n**VARIABLES**\nDISCRETE f[%s]{0..%s}\n" % (len(source),len(target)-1)
+    if a and b:
+        pass
     result += "**TUPLELIST**\n"
     result += target.minion_tables(subtype)
     result += "**CONSTRAINTS**\n"
@@ -248,7 +250,7 @@ def bihomomorphisms_from_any(sources, target, subtype):
             yield bh
     return
 
-def is_isomorphic(source, target, subtype):
+def is_isomorphic(source, target, subtype, a=None,b=None):
 
     i = isomorphisms(source,target,subtype,allsols=False)
     
