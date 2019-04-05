@@ -12,8 +12,12 @@ def main():
     model.relations = {} # este test es sin relaciones
     
     for i in range(10):
-        ta = sample(model.universe, 3)
-        tb = sample(model.universe, 3)
+        if len(model.universe) >= 3:
+            ta = sample(model.universe, 3)
+            tb = sample(model.universe, 3)
+        else:
+            ta = sample(model.universe, len(model.universe)-1)
+            tb = sample(model.universe, len(model.universe)-1)
         
         start_hit = time()
         hit_return = TupleModelHash(model, ta) == TupleModelHash(model, tb)
