@@ -31,7 +31,6 @@ def parse_universe(line):
 
 
 def parse_defrel(line):
-    print("'%s'" % line)
     sym, ntuples, arity = line.split()
     ntuples, arity = int(ntuples), int(arity)
     return Relation(sym, arity), ntuples
@@ -47,7 +46,7 @@ def parse_tuple(line):
     return tuple(map(eval, line.split()))
 
 
-def parser(path=None, preprocess=True):
+def parser(path=None, preprocess=True, verbose=True):
     """
     New parser
     """
@@ -78,16 +77,18 @@ def parser(path=None, preprocess=True):
                         # empieza una operacion
                         current_op = parse_defop(line)
                         op_missing_tuples = len(universe)**current_op.arity
-                        print("universe %s" % universe)
-                        print("%s tuples: %s" %
-                              (current_op.sym, op_missing_tuples))
+                        if verbose:
+                            print("universe %s" % universe)
+                            print("%s tuples: %s" %
+                                  (current_op.sym, op_missing_tuples))
                     elif line.count(" ") == 2:
                         # empieza una relacion
                         current_rel, rel_missing_tuples = parse_defrel(line)
-                        try:
-                            print("%s density: %f" % (current_rel.sym, float(rel_missing_tuples)/(len(universe)**current_rel.arity)))
-                        except:
-                            print("WARNING: no pudo calcular la densidad")
+                        if verbose:
+                            try:
+                                print("%s density: %f" % (current_rel.sym, float(rel_missing_tuples)/(len(universe)**current_rel.arity)))
+                            except:
+                                print("WARNING: no pudo calcular la densidad")
                 else:
                     if current_rel is not None:
                         # continua una relacion
@@ -123,7 +124,8 @@ def parser(path=None, preprocess=True):
                 rel = relations[sym]
                 prep_relations = prep_relations.union(preprocessing.preprocesamiento(rel.r))
         relations = {sym:relations[sym] for sym in relations if not sym.startswith("T")}
-        print ("Preprocessing turned T into %s Ts" % len(prep_relations))
+        if verbose:
+            print ("Preprocessing turned T into %s Ts" % len(prep_relations))
         for i,rel in enumerate(prep_relations):
             relations["T%s" % i]=Relation("T%s" % i, len(next(iter(rel))), rel)
 
