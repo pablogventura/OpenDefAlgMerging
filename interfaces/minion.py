@@ -162,12 +162,13 @@ def isomorphisms(source,target,subtype,allsols=True,a=None,b=None):
         return [] # generador vacio
     
     result = "MINION 3\n**VARIABLES**\nDISCRETE f[%s]{0..%s}\n" % (len(source),len(target)-1)
-    if a and b:
-        pass
     result += "**TUPLELIST**\n"
     result += target.minion_tables(subtype)
     result += "**CONSTRAINTS**\n"
     result += source.minion_constraints(subtype)
+    if a and b: #TODO esto que sean extensiones
+        pass
+        #result += "element(vec, i, e)"
     result += "alldiff([f["
     result += "],f[".join(str(i) for i in range(len(source)))
     result += "]])\n"
