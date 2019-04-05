@@ -8,7 +8,7 @@ from colorama import Fore, Style
 
 
 def main():
-    model = parser(sys.argv[1],verbose=False)
+    model = parser(sys.argv[1], verbose=False)
     model.relations = {} # este test es sin relaciones
     
     for i in range(10):
