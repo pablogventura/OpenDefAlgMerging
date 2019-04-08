@@ -52,7 +52,7 @@ def closure(generators):
     print("j 2")
     for a, b, r in rel_join:
         print("%s %s %s" % (a, b, r))
-    print("T0 2 %s" % len(universe)**2)
+    print("T0 %s 2" % len(universe)**2)
     for a, b in product(universe, universe):
         print("%s %s" % (a, b))
 

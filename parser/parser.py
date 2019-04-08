@@ -92,12 +92,16 @@ def parser(path=None, preprocess=True, verbose=True):
                 else:
                     if current_rel is not None:
                         # continua una relacion
-                        if rel_missing_tuples:
-                            current_rel.add(parse_tuple(line))
-                            rel_missing_tuples -= 1
-                        if not rel_missing_tuples:
-                            relations[current_rel.sym] = current_rel
-                            current_rel = None
+                        try:
+                            if rel_missing_tuples:
+                                current_rel.add(parse_tuple(line))
+                                rel_missing_tuples -= 1
+                            if not rel_missing_tuples:
+                                relations[current_rel.sym] = current_rel
+                                current_rel = None
+                        except ValueError:
+                            print(line)
+                            raise
                     elif current_op is not None:
                         # continua una operacion
                         if op_missing_tuples:
