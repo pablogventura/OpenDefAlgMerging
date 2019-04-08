@@ -3,12 +3,8 @@ from random import sample
 import sys
 
 
-def clean_print(value):
-    value = value.replace("(", "'(")
-    value = value.replace(")", ")'")
-    while ", " in value:
-        value = value.replace(", ", ",")
-    print(value)
+def clean_print(value,universe):
+    print(" ".join(str(universe.index(v)) for v in value))
 
 def inverse(a):
     
@@ -43,25 +39,26 @@ def generador(perm, gens):
                 universe.add(r)
                 sigo = True
     universe.add(tuple(range(perm)))
+    universe = sorted(universe)
     print("# Quedaron: %s" % len(universe))
-    clean_print(" ".join(str(e) for e in universe))
+    print(" ".join(str(i) for i in range(len(universe))))
     print("")
     print("Id 0")
-    clean_print(str(tuple(range(perm))))
+    clean_print([tuple(range(perm))],universe)
     print("")
     print("O 2")
     for a, b in product(universe, universe):
         r = compose(a, b)
-        clean_print("%s %s %s" % (a,b,r))
+        clean_print((a,b,r),universe)
     print("")
     print("I 1")
     for a in universe:
         r = inverse(a)
-        clean_print("%s %s" % (a,r))
+        clean_print((a,r),universe)
     print("")
-    clean_print("T0 %s %s" % (len(universe)**2, 2))
+    print("T0 %s %s" % (len(universe)**2, 2))
     for i in product(universe, universe):
-        clean_print(" ".join(map(str, i)))
+        clean_print(i,universe)
 
 def main():
     try:
