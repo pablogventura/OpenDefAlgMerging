@@ -13,7 +13,7 @@ def main():
     model.relations = {} # este test es sin relaciones
     
     tuples=[]
-    for i in range(2):
+    for i in range(8):
         tuples.append(tuple(sample(model.universe, 3)))
     # estan generadas las tuplas
         
@@ -30,14 +30,17 @@ def main():
     substructures = dict()
     for t in tuples:
         substructures[t] = model.substructure(t).to_relational_model()
-    subtype = sorted(model.relations.keys())
+    subtype = sorted(substructures[tuples[0]].relations.keys())
+    # print("Subtipo %s" % subtype)
     return_minion=[]
     for t1, t2 in product(substructures.keys(), substructures.keys()):
         return_minion.append(bool(is_isomorphic(substructures[t1], substructures[t2], subtype, t1, t2)))
     time_minion = time() - start_minion
     return_hits= "".join(str(int(i)) for i in return_hits)
     return_minion = "".join(str(int(i)) for i in return_minion)
-
+    # print(return_hits.count("1"))
+    # print(return_minion.count("1"))
+    # assert return_minion==return_hits
     # return_hits = int(return_hits, 2)
     # return_minion = int(return_minion, 2)
     # return_hits = hash(return_hits)
@@ -45,12 +48,12 @@ def main():
     
     print("*" * 80)
     if time_hit <= time_minion:
-        print(Fore.GREEN + "Hit = %s, hit/minion= %s" % (return_hits, time_hit / time_minion) + Style.RESET_ALL)
+        print(Fore.GREEN + "Hit    = %s, hit/minion= %s" % (return_hits, time_hit / time_minion) + Style.RESET_ALL)
         print(Fore.RED + "Minion = %s, minion/hit= %s" % (return_minion, time_minion / time_hit) + Style.RESET_ALL)
     else:
         print(Fore.RED + "Hit = %s, hit/minion= %s" % (return_hits, time_hit / time_minion) + Style.RESET_ALL)
         print(Fore.GREEN + "Minion = %s, minion/hit= %s" % (return_minion, time_minion / time_hit) + Style.RESET_ALL)
-
+    
 
 if __name__ == "__main__":
-    main()
+    j=main()

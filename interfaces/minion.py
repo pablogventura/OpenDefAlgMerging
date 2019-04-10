@@ -49,7 +49,6 @@ class MinionSol(object):
         La parsea y devuelve una lista
         """
         str_sol = self.minionapp.stdout.readline().decode('utf-8').strip()
-        print(str_sol)
         if str_sol:
             try:
                 result = list(map(int, str_sol.strip().split(" ")))
@@ -165,18 +164,17 @@ def isomorphisms(source,target,subtype,allsols=True,a=None,b=None):
     result += "**TUPLELIST**\n"
     result += target.minion_tables(subtype)
     result += "**CONSTRAINTS**\n"
+    
     result += source.minion_constraints(subtype)
     if a and b: #TODO esto que sean extensiones
         for i in range(len(a)):
-            result += "element(f, %s, %s)\n" % (source.universe.index(a[i]), source.universe.index(b[i]))
+            result += "element(f, %s, %s)\n" % (source.universe.index(a[i]), target.universe.index(b[i]))
     result += "alldiff([f["
     result += "],f[".join(str(i) for i in range(len(source)))
     result += "]])\n"
     result += "**EOF**" 
     
-    print(result)
-    input()
-    
+    # print(result)
     
     return MinionSol(result,allsols,fun=lambda iso:(Isomorphism({source.universe[k]:target.universe[iso[k]] for k in iso},source,target,subtype)))
 
