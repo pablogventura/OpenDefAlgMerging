@@ -13,7 +13,7 @@ def main():
     model.relations = {} # este test es sin relaciones
     
     tuples=[]
-    for i in range(8):
+    for i in range(50):
         tuples.append(tuple(sample(model.universe, 3)))
     # estan generadas las tuplas
         
