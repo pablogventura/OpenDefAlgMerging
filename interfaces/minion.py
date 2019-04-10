@@ -49,7 +49,7 @@ class MinionSol(object):
         La parsea y devuelve una lista
         """
         str_sol = self.minionapp.stdout.readline().decode('utf-8').strip()
-        
+        print(str_sol)
         if str_sol:
             try:
                 result = list(map(int, str_sol.strip().split(" ")))
@@ -167,13 +167,15 @@ def isomorphisms(source,target,subtype,allsols=True,a=None,b=None):
     result += "**CONSTRAINTS**\n"
     result += source.minion_constraints(subtype)
     if a and b: #TODO esto que sean extensiones
-        pass
-        #result += "element(vec, i, e)"
+        for i in range(len(a)):
+            result += "element(f, %s, %s)\n" % (source.universe.index(a[i]), source.universe.index(b[i]))
     result += "alldiff([f["
     result += "],f[".join(str(i) for i in range(len(source)))
     result += "]])\n"
     result += "**EOF**" 
     
+    print(result)
+    input()
     
     
     return MinionSol(result,allsols,fun=lambda iso:(Isomorphism({source.universe[k]:target.universe[iso[k]] for k in iso},source,target,subtype)))
@@ -253,7 +255,7 @@ def bihomomorphisms_from_any(sources, target, subtype):
 
 def is_isomorphic(source, target, subtype, a=None,b=None):
 
-    i = isomorphisms(source,target,subtype,allsols=False)
+    i = isomorphisms(source,target,subtype,allsols=False,a=a,b=b)
     
     if i:
         return i[0]

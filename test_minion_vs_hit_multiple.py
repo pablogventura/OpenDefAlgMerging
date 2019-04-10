@@ -1,20 +1,20 @@
 from parser.parser import parser
-from random import sample
+from random import sample,seed
 import sys
 from hit import TupleModelHash
 from time import time
 from interfaces.minion import is_isomorphic
 from colorama import Fore, Style
 from itertools import product
-
+seed(1)
 
 def main():
     model = parser(sys.argv[1], verbose=False)
     model.relations = {} # este test es sin relaciones
     
     tuples=[]
-    for i in range(100):
-        tuples.append(sample(model.universe, 3))
+    for i in range(2):
+        tuples.append(tuple(sample(model.universe, 3)))
     # estan generadas las tuplas
         
     start_hit = time()
@@ -27,18 +27,21 @@ def main():
     time_hit = time() - start_hit
         
     start_minion = time()
-    substructures = []
+    substructures = dict()
     for t in tuples:
-        substructures.append(model.substructure(t).to_relational_model())
+        substructures[t] = model.substructure(t).to_relational_model()
     subtype = sorted(model.relations.keys())
     return_minion=[]
-    for s1, s2 in product(substructures, substructures):
-        return_minion.append(bool(is_isomorphic(s1, s2, subtype)))
+    for t1, t2 in product(substructures.keys(), substructures.keys()):
+        return_minion.append(bool(is_isomorphic(substructures[t1], substructures[t2], subtype, t1, t2)))
     time_minion = time() - start_minion
+    return_hits= "".join(str(int(i)) for i in return_hits)
+    return_minion = "".join(str(int(i)) for i in return_minion)
 
-    return_hits=int("".join(str(int(i)) for i in return_hits), 2)
-    return_minion = int("".join(str(int(i)) for i in return_minion), 2)
-    
+    # return_hits = int(return_hits, 2)
+    # return_minion = int(return_minion, 2)
+    # return_hits = hash(return_hits)
+    # return_minion = hash(return_minion)
     
     print("*" * 80)
     if time_hit <= time_minion:
