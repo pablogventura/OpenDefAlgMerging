@@ -6,7 +6,6 @@ from time import time
 from interfaces.minion import is_isomorphic
 from colorama import Fore, Style
 from itertools import product
-seed(1)
 
 def main():
     model = parser(sys.argv[1], verbose=False)
