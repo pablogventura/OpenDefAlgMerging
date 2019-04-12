@@ -4,7 +4,6 @@ import sys
 from hit import TupleModelHash
 from time import time
 from interfaces.minion import is_isomorphic
-from colorama import Fore, Style
 from itertools import product
 
 def main():
@@ -40,8 +39,6 @@ def main():
 
     print("Hit    = %s" % time_hit)
     print("Minion = %s" % time_minion)
-
-    
 
 if __name__ == "__main__":
     j=main()
