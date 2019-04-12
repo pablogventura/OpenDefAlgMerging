@@ -17,7 +17,7 @@
 #SBATCH --job-name=hit_vs_minion
 
 ### Cantidad de nodos a usar
-#SBATCH --nodes=6
+#SBATCH --nodes=1
 
 ### Procesos por nodo
 #SBATCH --ntasks-per-node=1
@@ -26,7 +26,7 @@
 ### En mendieta: <= 16
 ### En jupiterace: <= 6
 ### En zx81: <= 12
-#SBATCH --cpus-per-task=12
+#SBATCH --cpus-per-task=6
 
 ### Tiempo de ejecución. Formato dias-horas:minutos. Máximo: tres días.
 #SBATCH --time 2-10:00:00
