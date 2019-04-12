@@ -3,7 +3,7 @@ Toma como argumento el directorio donde estan los modelos
 """
 from shell_non_blocking import ShellProc
 from time import sleep
-cores = 10
+cores = 6
 procs = []
 try:
     import os
@@ -13,7 +13,7 @@ try:
             print("%s%%" % (i / len(files)))
             
             procs = [p for p in procs if p.is_running()]
-            if len(procs) < 10:
+            if len(procs) < cores:
                 procs.append(ShellProc('python3 test_minion_vs_hit_multiple_times.py "%s" > "%s"' % (f,f.replace(".model",".hvm"))))
             
 except KeyboardInterrupt:

@@ -17,7 +17,7 @@
 #SBATCH --job-name=hit_vs_minion
 
 ### Cantidad de nodos a usar
-#SBATCH --nodes=1
+#SBATCH --nodes=6
 
 ### Procesos por nodo
 #SBATCH --ntasks-per-node=1
