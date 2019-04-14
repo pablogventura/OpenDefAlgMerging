@@ -4,7 +4,7 @@ from random import sample, choice
 from itertools import product, permutations
 
 
-def generador(tA, t, c, fs, fc, tarity):
+def generador(tA, t, c, fs, fc, tarity,density):
     # tA es el tamaño de la estructura ambiente
     # t es la cantidad de subconjuntos
     # c es el tamaño de esos subconjuntos
@@ -48,8 +48,8 @@ def generador(tA, t, c, fs, fc, tarity):
                     intersection = intersection & sets.pop()
                 fvalues = choice(list(intersection))
                 result += " ".join(str(e) for e in values) + " %s\n" % fvalues
-    result += "T0 %s %s\n" % (tA**tarity, tarity)
-    for i in product(universe, repeat=tarity):
+    result += "T0 %s %s\n" % (int((tA**tarity)*density), tarity)
+    for i in sample(list(product(universe, repeat=tarity)),int((tA**tarity)*density)):
         result += " ".join(map(str, i))
         result += "\n"
     return result
@@ -64,7 +64,11 @@ def permutador(lista, permutacion):
 
 def main():
     try:
-        tA, t, c, fs, fc, tarity = sys.argv[1:]
+        tA, t, c, fs, fc, tarity = sys.argv[1:7]
+        try:
+            density = float(sys.argv[7])
+        except:
+            density = 1
         tA = int(tA)
         t = int(t)
         c = int(c)
@@ -74,13 +78,14 @@ def main():
         assert all(i is False or i is True for i in fc)
         tarity = int(tarity)
     except:
+        raise
         print("""tA es el tamaño de la estructura ambiente
             t es la cantidad de subconjuntos
             c es el tamaño de esos subconjuntos
             fs es una lista de aridades de funciones
             fc es una lista de booleanos para hacer a la funcion hiperconmutativa""")
         sys.exit(1)
-    print(generador(tA, t, c, fs, fc, tarity))
+    print(generador(tA, t, c, fs, fc, tarity,density))
 
 
 if __name__ == "__main__":
