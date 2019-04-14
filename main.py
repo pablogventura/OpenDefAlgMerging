@@ -26,10 +26,10 @@ class Orbit():
         self.o = o
         self.p = p
         self.t = t
-
+    
     def __contains__(self, t):
         return t in self.o
-
+    
     def __add__(self, other):
         if self.p != other.p:
             raise CounterexampleTuples(self, other)
@@ -40,7 +40,7 @@ class Orbit():
         else:
             t = None
         return Orbit(self.o+other.o, self.p, t)
-
+    
     def __repr__(self):
         if self.t is not None:
             return "(%s,%s,%s)" % (self.o, self.p, str(hash(self.t))[-4:])
@@ -95,7 +95,7 @@ class Partition():
         return t in self.types
 
     def propagar(self, gamma):
-        for t in list(self.partition.keys()):
+        for t in permutations(self.universe, r=self.arity):
             tp = gamma.vcall(t)
             if None not in tp:
                 self.unir(t, tp)
@@ -174,7 +174,8 @@ def isOpenDef(A, Tgs):
 
         (E, l, rs) = S.pop()
         for t in l:
-
+            # if t==(3,):
+            #     import ipdb;ipdb.set_trace()
             r = rs[len(t)]
             O = Os[len(t)]
             if not O.hasKnowType(t):
@@ -203,77 +204,8 @@ def isOpenDef(A, Tgs):
                                              for e in spectrum]), mps))
                         O.setType(t, h)  # Etiqueto la orbita de t
                         break
-
-    return True
-
-
-def isOpenDefTodos(A, Tgs):
-    Tgs = sorted([A.relations[Tg] for Tg in Tgs])
-    spectrum = list(sorted({Tg.arity for Tg in Tgs}, reverse=True))
-    Os = {e: Partition(A.universe, e, Tgs) for e in spectrum}  # Inicialización de las orbitas
-    # Inicializacion del stack
-    S = [(A, chain(*[combinations(A.universe, r=e)
-                     for e in spectrum]), {e: MicroPartition() for e in spectrum})]
-    while S:
-        (E, l, rs) = S.pop()
-        for t in l:
-            r = rs[len(t)]
-            O = Os[len(t)]
-            if not O.hasKnowType(t):
-                h = TupleModelHash(E, t)
-                u = h.universe()
-                if len(u) == len(E):  # nos quedamos en el mismo tamaño
-                    # es un tipo conocido (un automorfismo para checkear)
-                    if h in r:
-                        gamma = h.iso(r.representative(h))
-                        propagarGrosa(Os, gamma)
-                    else:  # es un tipo no conocido de potencial automorfismo
-                        O.setType(t, h)  # Etiqueto la orbita de t
-                        r.newType(t, h)
-                        # PROCESAR PERMUTACIONES Y AGREGARLAS EN O Y r
-                        rr = procesarPermutaciones(h, E, O, Os)
-                        r.union(rr)
-                else:  # Genera algo mas chico
-                    # es de un tipo conocido (un subiso para checkear)
-                    if h in O:
-                        gamma = O[h].iso(h)
-                        propagarGrosa(Os, gamma)
-                    else:
-                        S.append((E, l, rs))
-                        mps = {len(t): MicroPartition({h: t})}
-                        for e in spectrum:
-                            if e not in mps:
-                                mps[e] = MicroPartition()
-                        # PROCESAR PERMUTACIONES Y MANDARLAS EN mps
-                        rr = procesarPermutaciones(h, E, O, Os)
-                        mps.union(rr)
-                        S.append((A, chain(*[combinations(h.universe(), r=e)
-                                             for e in spectrum]), mps))
-                        O.setType(t, h)  # Etiqueto la orbita de t
-                        break
     print(Os)
-    print(tuple(len(Os[O]) for O in Os))
     return True
-
-
-def procesarPermutaciones(h, E, O, Os):
-    t = h.generator_tuple
-    ml = MicroPartition()
-    ml.newType(t, h)
-    # salteo la primera que es la identidad
-    for gamma in islice(permutations([0, 1, 2, 3]), 1, None):
-        def gammaf(x): return tuple(x[i] for i in gamma)
-        tt = gammaf(t)
-        if not O.hasKnowType(tt):
-            hh = TupleModelHash(E, tt)
-            if hh in ml:
-                iso = hh.iso(ml.representative(hh))
-                propagarGrosa(Os, iso)
-            else:
-                O.setType(tt, hh)  # Etiqueto la orbita de t
-                ml.newType(tt, hh)
-    return ml
-
 
 if __name__ == "__main__":
     main()
