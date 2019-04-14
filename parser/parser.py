@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python
+# !/usr/bin/env python
 import sys
 
 from first_order.models import Model
@@ -129,7 +129,7 @@ def parser(path=None, preprocess=True, verbose=True):
                 prep_relations = prep_relations.union(preprocessing.preprocesamiento(rel.r))
         relations = {sym:relations[sym] for sym in relations if not sym.startswith("T")}
         if verbose:
-            print ("Preprocessing turned T into %s Ts" % len(prep_relations))
+            print ("Model thinning turned T into %s Ts" % len(prep_relations))
         for i,rel in enumerate(prep_relations):
             relations["T%s" % i]=Relation("T%s" % i, len(next(iter(rel))), rel)
 

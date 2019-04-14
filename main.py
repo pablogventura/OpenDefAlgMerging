@@ -13,12 +13,17 @@ def main():
         model = parser(sys.argv[1], preprocess=True)
     except IndexError:
         model = parser()
-
+    print("*"*20)
     targets_rels = tuple(sym for sym in model.relations.keys() if sym[0] == "T")
     if not targets_rels:
         print("ERROR: NO TARGET RELATIONS FOUND")
         return
-    print(isOpenDef(model, targets_rels))
+    try:
+        if isOpenDef(model, targets_rels):
+            print("DEFINABLE")
+    except CounterexampleTuples as e:
+        print("NOT DEFINABLE")
+        print("Counterexample: %s" % e.args)
 
 
 class Orbit():
@@ -204,7 +209,7 @@ def isOpenDef(A, Tgs):
                                              for e in spectrum]), mps))
                         O.setType(t, h)  # Etiqueto la orbita de t
                         break
-    print(Os)
+
     return True
 
 if __name__ == "__main__":
