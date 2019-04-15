@@ -20,7 +20,7 @@ for i, f in enumerate(files):
         try:
             results[dir].append((float(file.readline()[9:-1]),float(file.readline()[9:-1])))
         except ValueError:
-            print("ERROR in file %s" % f)
+            print("ERROR in file %s" % f.replace(" ","\ "))
 
  
 for k in results:
