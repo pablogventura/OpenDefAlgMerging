@@ -12,7 +12,10 @@ def main():
     
     tuples=[]
     for i in range(50):
-        tuples.append(tuple(sample(model.universe, 3)))
+        try:
+            tuples.append(tuple(sample(model.universe, 3)))
+        except ValueError:
+            tuples.append(tuple(sample(model.universe, 2)))
     # estan generadas las tuplas
         
     start_hit = time()
