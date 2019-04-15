@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
 from itertools import permutations, chain, combinations
-
+from time import time
 from parser.parser import parser
 from counterexample import CounterexampleTuples
 from hit import TupleModelHash
@@ -18,13 +18,16 @@ def main():
     if not targets_rels:
         print("ERROR: NO TARGET RELATIONS FOUND")
         return
+    start_hit = time()
     try:
+        
         if isOpenDef(model, targets_rels):
             print("DEFINABLE")
     except CounterexampleTuples as e:
         print("NOT DEFINABLE")
         print("Counterexample: %s" % e.args)
-
+    time_hit = time() - start_hit
+    print("Elapsed time: %s" % time_hit)
 
 class Orbit():
     def __init__(self, o, p, t=None):  # orbita, polaridad, tipo
