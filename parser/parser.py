@@ -129,7 +129,7 @@ def parser(path=None, preprocess=True, verbose=True):
                 prep_relations = prep_relations.union(preprocessing.preprocesamiento(rel.r))
         relations = {sym:relations[sym] for sym in relations if not sym.startswith("T")}
         if verbose:
-            print ("Model thinning turned T into %s Ts" % len(prep_relations))
+            print ("Target thinning turned T into %s Ts" % len(prep_relations))
         for i,rel in enumerate(prep_relations):
             relations["T%s" % i]=Relation("T%s" % i, len(next(iter(rel))), rel)
 
