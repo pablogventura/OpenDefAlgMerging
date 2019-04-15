@@ -12,7 +12,7 @@ def generar(*args, cuantity=100):
             continue
         filename = '"' + filename + '"'
         try:
-            os.mkdir(args[0])
+            os.mkdir(os.path.join(path_mega_hit, args[0]))
         except:
             pass
         script = "genera_" + args[0] + ".py"
