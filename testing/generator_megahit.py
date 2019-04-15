@@ -25,5 +25,9 @@ def generar(*args, cuantity=100):
 generar("boole",4)
 generar("grupo_abeliano",2,2,4)
 generar("alg_random",16,0,0,[2,2],[False,False],2)
-
-
+generar("boole",5)
+generar("grupo_abeliano",2,4,4)
+generar("alg_random",32,0,0,[2,2],[False,False],2)
+generar("boole",6)
+generar("grupo_abeliano",2,4,8)
+generar("alg_random",64,0,0,[2,2],[False,False],2)
