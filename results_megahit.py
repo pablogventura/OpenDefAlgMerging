@@ -9,6 +9,7 @@ for i, f in enumerate(files):
     if f.endswith(".megahit"):
         
         _,_,dir,filename = f.split("/")
+        filename = filename[:-len(".megahit")]
         file = open(f,"r")
         try:
             counter=0
@@ -24,6 +25,7 @@ for i, f in enumerate(files):
                 s,_=filename.split("_", 1)
                 size = int(s)
             elif dir.endswith("grupo_abeliano"):
+
                 size = reduce(operator.mul,list( int(x) for x in filename.split("_"))[:-1],1)
             else:
                 size = map(int,filename.split("_"))
@@ -44,4 +46,27 @@ for k in results:
     print()
     print(k)
     print("Time: %s" % value)
-    
+
+new_new_results = defaultdict(list)
+for k in new_results:
+    new_new_results[k[0]].append((k[1],new_results[k]))
+
+new_new_results = {k:sorted(new_new_results[k],key=lambda x: x[0]) for k in new_new_results}
+
+print(new_new_results)
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+ax = plt.subplot(111)
+t1 = np.arange(16, 32, 64)
+#plt.semilogy(np.exp(1/5.0))
+for k in new_new_results:
+    plt.plot([16,32,64], [i[1] for i in new_new_results[k]], label=k)
+
+leg = plt.legend(loc='best', ncol=1, shadow=True, fancybox=True)
+leg.get_frame().set_alpha(0.5)
+
+
+plt.show()
