@@ -1,0 +1,9 @@
+universe [0, 1]
+m tuples: 4
+universe [0, 1]
+j tuples: 4
+T0 density: 1.000000
+Target thinning turned T into 2 Ts
+********************
+DEFINABLE
+Elapsed time: 0.0003104209899902344
