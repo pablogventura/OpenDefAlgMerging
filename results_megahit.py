@@ -60,6 +60,8 @@ import numpy as np
 
 
 ax = plt.subplot(111)
+ax.set_ylabel('Time ($s$)')
+ax.set_title('Time to decide definability')
 t1 = np.arange(16, 32, 64)
 #plt.semilogy(np.exp(1/5.0))
 for k in new_new_results:
