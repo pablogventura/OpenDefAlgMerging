@@ -13,12 +13,12 @@ def meet(a, b):
     return a & b
 
 
-def closure(generators):
+def closure(ancho,muestra,q=None):
+    generators = sample(range(2 ** ancho), muestra)
     news = set(generators)
     universe = set()
     rel_meet = set()
     rel_join = set()
-
     while news:
         local_news = set()
         for t in product(news, news):
@@ -41,6 +41,13 @@ def closure(generators):
         local_news -= news
         universe |= news
         news = set(local_news)
+        if (q and (len(universe) > q) or (q and (not news and len(universe)<q))):
+            print("intento")
+            generators = sample(range(2 ** ancho), muestra)
+            news = set(generators)
+            universe = set()
+            rel_meet = set()
+            rel_join = set()
     print(" ".join(map(str, universe)))
     print("# Universe Size: %s" % len(universe))
     print("# Generated from: " + " ".join(map(str, generators)))
@@ -69,8 +76,11 @@ def main():
         muestra = int(sys.argv[2])
     except:
         muestra = 2**ancho
-    generators = sample(range(2**ancho), muestra)
-    closure(generators)
+    try:
+        q = int(sys.argv[3])
+    except:
+        q = None
+    closure(ancho,muestra,q)
 
 
 if __name__ == "__main__":
