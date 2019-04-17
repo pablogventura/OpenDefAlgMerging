@@ -12,8 +12,8 @@ def main():
         muestra = int(sys.argv[2])
     except:
         muestra = 2**ancho
-    generators = sample(range(2**ancho), muestra)
-    closure(generators)
+    
+    closure(ancho, muestra)
 
 
 if __name__ == "__main__":
