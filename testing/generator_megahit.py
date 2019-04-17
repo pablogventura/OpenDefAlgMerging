@@ -31,3 +31,7 @@ generar("alg_random",32,0,0,[2,2],[False,False],2)
 generar("boole",6)
 generar("grupo_abeliano",2,4,8)
 generar("alg_random",64,0,0,[2,2],[False,False],2)
+
+generar("grupo_no_abeliano",7,2,16)
+generar("grupo_no_abeliano",7,2,32)
+generar("grupo_no_abeliano",7,2,64)
