@@ -62,10 +62,11 @@ import numpy as np
 ax = plt.subplot(111)
 ax.set_ylabel('Time ($s$)')
 ax.set_title('Time to decide definability')
-t1 = np.arange(16, 32, 64)
-#plt.semilogy(np.exp(1/5.0))
+
+#plt.semilogx(2)
+plt.loglog(basex=2)
 for k in new_new_results:
-    plt.plot([16,32,64], [i[1] for i in new_new_results[k]], label=k)
+    plt.plot([2,4,8,16, 32, 64], [i[1] for i in new_new_results[k]], label=k)
 
 leg = plt.legend(loc='best', ncol=1, shadow=True, fancybox=True)
 leg.get_frame().set_alpha(0.5)

@@ -2,7 +2,7 @@
 import os
 from random import randint
 path_mega_hit = "mega_hit_test"
-def generar(*args, quantity=100):
+def generar(*args, quantity=200):
     # genera alg random
     args = [str(i) for i in args]
     for i in range(quantity):
