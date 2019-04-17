@@ -2,10 +2,11 @@
 import os
 from random import randint
 path_mega_hit = "mega_hit_test"
-def generar(*args, cuantity=100):
+def generar(*args, quantity=100):
     # genera alg random
     args = [str(i) for i in args]
-    for i in range(cuantity):
+    for i in range(quantity):
+        print(i/quantity)
         filename = os.path.join(path_mega_hit, args[0], '_'.join(args[1:] + [str(i)]))
         filename += ".model"
         if os.path.isfile(filename):
