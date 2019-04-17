@@ -29,9 +29,9 @@ for i, f in enumerate(files):
                 size = map(int,filename.split("_"))
 
             results[(dir,size)].append(float(file.readline()[14:]))
-    
         except ValueError:
             print("ERROR in file %s" % f.replace(" ","\ "))
+        file.close()
 new_results = dict()
 for k in results:
     value = 0
@@ -45,28 +45,3 @@ for k in results:
     print(k)
     print("Time: %s" % value)
     
-#
-# import numpy as np
-# import matplotlib.pyplot as plt
-#
-#
-# data = [(k,new_results[k][0],new_results[k][1]) for k in new_results]
-#
-# print(data)
-#
-# temp_data= sorted(data,key=lambda v:v[2])
-# data=[]
-# for n,h,m in temp_data:
-#     if n == "ret":
-#         data.append(("Distributive\nLattices",h,m))
-#     elif n == "grupo_no_abeliano":
-#         data.append(("Not Abelian\nGroups",h,m))
-#     elif n == "grupo_abeliano":
-#         data.append(("Abelian\nGroups",h,m))
-#     elif n == "boole":
-#         data.append(("Boolean\nAlgebras",h,m))
-#     elif n == "alg_random":
-#         data.append(("Random\nAlgebras",h,m))
-#     else:
-#         data.append((n, h, m))
-#
